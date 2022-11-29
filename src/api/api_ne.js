@@ -9,6 +9,10 @@ export const initAxios = dispatch => {
     };
 };
 
+export const apiSubmitCollectionForm = async (params) => (await axios.post("submitCollectionForm", params)).data;
+
+export const apiUploadFile = async (body) => (await axios.post("upload", body)).data;
+
 export const apiGetUser = async () => (await axios.get("currentUser"));
 
 export const apiLogin = async userInfo => (await axios.post("login/account", userInfo)).data;

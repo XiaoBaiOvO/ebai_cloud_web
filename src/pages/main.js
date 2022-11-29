@@ -1,150 +1,257 @@
-import {useDispatch, useSelector} from "react-redux";
-import {Outlet, useLocation, useNavigate} from "react-router-dom";
-import {Button, Modal, Menu} from "antd";
+import {Button, Form, Space, Drawer, Spin, Mentions, Rate, Divider, Statistic} from "antd";
+import {DefaultFooter, ProCard, StatisticCard } from "@ant-design/pro-components";
+import { Line } from '@ant-design/plots';
+import {Header} from "antd/es/layout/layout";
 import React, {useState} from "react";
-import {useRequest} from "ahooks";
-import {MenuUnfoldOutlined, MenuFoldOutlined} from "@ant-design/icons";
-// import * as Collection from "./collection/collection";
+import {
+    CloudFilled,
+    RightOutlined,
+    EllipsisOutlined,
+    FrownOutlined,
+    MehOutlined,
+    SmileOutlined,
+    ExportOutlined
+} from "@ant-design/icons";
 import Collection from "./collection/collection"
+import styles from "./main.module.scss"
 
-import {apiLogout} from "../api/api";
-import {setUserName} from "../redux/userSlice";
-import styles from "./main.module.scss";
-// import {convertToArray, getAttrValue, getValueByJPath, removeNS} from "./common/commFunc";
-// import {addEvent, setAlarms} from "../redux/faultSlice";
-import {menu} from "../config/config";
+const data = [
+    {
+        "Date": "06:00",
+        "scales": 3
+    },
+    {
+        "Date": "07:00",
+        "scales": 5
+    },
+    {
+        "Date": "08:00",
+        "scales": 9
+    },
+    {
+        "Date": "09:00",
+        "scales": 17
+    },
+    {
+        "Date": "10:00",
+        "scales": 18
+    }];
 
-const {SubMenu} = Menu;
-const {confirm} = Modal;
+const config = {
+    data,
+    padding: 'auto',
+    xField: 'Date',
+    yField: 'scales',
+    xAxis: {
+        // type: 'timeCat',
+        tickCount: 5,
+    },
+};
+
+const customIcons = {
+    1: <FrownOutlined />,
+    2: <FrownOutlined />,
+    3: <MehOutlined />,
+    4: <SmileOutlined />,
+    5: <SmileOutlined />,
+};
 
 const Main = () => {
-    const {userName} = useSelector(state => state.user);
-    // const [detect, setDetect] = useState(false);
-    const [collapsed, setCollapsed] = useState(false);
-    const [openKey, setOpenKey] = useState();
-    const {loading, runAsync} = useRequest(apiLogout, {manual: true});
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const {pathname: from} = useLocation();
-    // const {protocol, host} = window.location;
-    // const websocket = useWebSocket(`ws${protocol === "http:" ? "" : "s"}:${host}/api/ws`, {
-    //     manual: true,
-    //     reconnectLimit: 0,
-    //     onOpen: async () => {
-    //         const response = await apiGetAlarms();
-    //         if (response.result) {
-    //             const allAlarms = {};
-    //             // convertToArray(getValueByJPath(response.data, ["system", "alarms", "alarm", "state"])).forEach(alarm => {
-    //             //     allAlarms[alarm.id] = alarm;
-    //             // });
-    //             dispatch(setAlarms(allAlarms));
-    //         }
-    //     },
-    //     onMessage: event => {
-    //         const message = JSON.parse(event.data).notification;
-    //         const alarm_notification = message.notification?.['alarms-notification'];
-    //         if (alarm_notification) {
-    //             // dispatch(
-    //             //     alarm_notification.delete ?
-    //             //         clearAlarm(getValueByJPath(alarm_notification.delete, ['alarms', 'alarm', 'state'])) :
-    //             //         addAlarm(getValueByJPath(alarm_notification.update, ['alarms', 'alarm', 'state'])));
-    //         } else {
-    //             const event = message.notification?.['event-notification']?.events;
-    //             if (event) {
-    //                 const obj = {
-    //                     id: event.id,
-    //                     resource: event.resource,
-    //                     text: event.text,
-    //                     'time-created': event['time-created'],
-    //                     type: event['event-abbreviate'],
-    //                     // severity: removeNS(getAttrValue(event, 'severity')),
-    //                 }
-    //                 dispatch(addEvent(obj));
-    //             }
-    //         }
-    //     },
-    //     onClose: () => {
-    //         // console.log(event);
-    //     },
-    //     onError: () => {
-    //         // console.log(event);
-    //     }
-    // });
 
-    // useEffect(() => {
-    //     if (userName === "" || userName == null) {
-    //         detect ? confirm({
-    //             content: <div>用户连接已中断，即将退回登录页面</div>,
-    //             onOk: () => {
-    //                 navigate("/login", {state: {from}});
-    //             }
-    //         }) : navigate("/login", {state: {from}});
-    //         websocket.readyState === 1 && websocket.disconnect();
-    //     } else {
-    //         setDetect(true);
-    //         websocket.readyState === 3 && websocket.connect();
-    //     }
-    // }, [userName]);
+    const [open, setOpen] = useState(false);
+    const [form] = Form.useForm();
 
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
-
-    const handleClick = () => {
-        confirm({
-            content: <div>是否退出用户？</div>,
-            onOk: () => {
-                // setDetect(false);
-                runAsync().then(() => {
-                    dispatch(setUserName(""));
-                    navigate("/login");
-                });
-            }
-        });
-    };
-
-    const handleMenuClick = e => {
-        navigate(`/${e.key}`);
+    const onFinish = async () => {
+        try {
+            const values = await form.validateFields();
+            console.log('Submit:', values);
+        } catch (errInfo) {
+            console.log('Error:', errInfo);
+        }
     };
 
     return (
-        // <section className={styles.container}>
-        //     <header className={styles.header}>
-        //         <Button type="primary" onClick={toggleCollapsed}>
-        //             {collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
-        //         </Button>
-        //         <h1>iGUI - Pairba</h1>
-        //         <div className={styles.header_space}/>
-        //         <span>{`用户名：${userName} `}</span>
-        //         <Button type="primary" loading={loading} onClick={handleClick}>Logout</Button>
-        //     </header>
-        //     <section className={styles.content}>
-        //         <aside className="aside">
-        //             <Menu mode="inline" onClick={handleMenuClick} defaultOpenKeys={[openKey]}
-        //                   defaultSelectedKeys={[from.replace("/", "")]}
-        //                   inlineCollapsed={collapsed}>
-        //                 {menu.map(item =>
-        //                     item.child ?
-        //                         <SubMenu key={item.key} icon={item.icon} title={item.name}>
-        //                             {item.child.map(subItem => {
-        //                                 (from === `/${subItem.key}` && openKey == null) && setOpenKey(item.key);
-        //                                 return <Menu.Item key={subItem.key}>{subItem.name}</Menu.Item>
-        //                             })}
-        //                         </SubMenu> :
-        //                         <Menu.Item key={item.key} icon={item.icon}>{item.name}</Menu.Item>
-        //                 )}
-        //             </Menu>
-        //         </aside>
-        //         <main className={styles.main}>
-        //             {<Outlet/>}
-        //         </main>
-        //     </section>
-        //     <footer className={styles.footer}>
-        //         {`@Copyright by Pairba, ${new Date().getFullYear()}`}
-        //     </footer>
-        // </section>
         <main className={styles.main}>
-            <Collection/>
+            <Header
+                style={{
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 1,
+                    width: '100%',
+                }}
+            >
+                <img alt="logo" src="/logo.png" width={40} style={{marginLeft: -30}}/>
+                <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工具站</span>
+                <Space style={{position: "absolute", right: 20}}>
+                    <Button style={{marginRight: 0}} ghost onClick={() => {setOpen(true)}}>数据统计</Button>
+                </Space>
+            </Header>
+            <ProCard layout="center">
+                <Collection/>
+            </ProCard>
+            <DefaultFooter
+                style={{
+                    marginTop: -40,
+                    padding: 1,
+                    background: 'none',
+                }}
+                copyright={"2022 Ebai Cloud Workstations"}
+                links={[
+                    {
+                        key: 'Ebai Cloud Workstations',
+                        title: 'XiaoBai Yun',
+                        href: '',
+                        blankTarget: false,
+                    },
+                    {
+                        key: 'github',
+                        title: <CloudFilled />,
+                        href: '',
+                        blankTarget: false,
+                    },
+                    {
+                        key: 'Author',
+                        title: 'Ethan & Daisy',
+                        href: '',
+                        blankTarget: false,
+                    },
+                ]}
+            />
+            <Drawer
+                placement="right"
+                onClose={() => {setOpen(false);}}
+                open={open}
+                title="感谢使用小白云"
+                closable={false}
+                extra={
+                    <Space>
+                        <Button type="dashed" shape="circle" onClick={() => {setOpen(false)}} icon={<ExportOutlined />} />
+                    </Space>
+                }
+            >
+                <div>
+                    <StatisticCard
+                        title={
+                            <Space>
+                                <span>地科2班</span>
+                                <RightOutlined style={{ color: 'rgba(0,0,0,0.65)' }} />
+                            </Space>
+                        }
+                        extra={<EllipsisOutlined />}
+                        statistic={{
+                            // icon: <SettingTwoTone style={{ color: 'rgba(0,0,0,0.65)' }} spin />,
+                            icon: <Spin />,
+                            value: 15,
+                            suffix: '人',
+                            // title: '当前完成人数:',
+                            prefix: '当前完成人数:',
+                            description: (
+                                <Space>
+                                    <Statistic title="实际完成度:" value="75%" trend="up" />
+                                    <Statistic title="总人数:" value="20人" />
+                                </Space>
+                            ),
+                        }}
+                        chart={
+                            <Line {...config} style={{height: 150}} />
+                            }
+                    />
+                    <Divider type='horizontal' />
+                    <Form form={form} layout="horizontal" onFinish={onFinish}>
+                        <Form.Item
+                            name="coders"
+                            label="姓名"
+                            labelCol={{
+                                span: 6,
+                            }}
+                            wrapperCol={{
+                                span: 16,
+                            }}
+                            // rules={[
+                            //     {
+                            //         validator: checkMention,
+                            //     },
+                            // ]}
+                        >
+                            <Mentions
+                                rows={1}
+                                placeholder="非必填"
+                                options={[
+                                    {
+                                        value: 'afc163',
+                                        label: 'afc163',
+                                    },
+                                    {
+                                        value: 'zombieJ',
+                                        label: 'zombieJ',
+                                    },
+                                    {
+                                        value: 'yesmeck',
+                                        label: 'yesmeck',
+                                    },
+                                ]}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="评价"
+                            label="评价"
+                            labelCol={{
+                                span: 6,
+                            }}
+                            wrapperCol={{
+                                span: 16,
+                            }}
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
+                            <Mentions
+                                rows={3}
+                                placeholder="可以对小白云给出评价或提出建议"
+                                options={[
+                                    {
+                                        value: 'afc163',
+                                        label: 'afc163',
+                                    },
+                                    {
+                                        value: 'zombieJ',
+                                        label: 'zombieJ',
+                                    },
+                                    {
+                                        value: 'yesmeck',
+                                        label: 'yesmeck',
+                                    },
+                                ]}
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            name="stars"
+                            labelCol={{
+                                span: 6,
+                            }}
+                            wrapperCol={{
+                                span: 16,
+                            }}
+                        >
+                            打分<Rate style={{marginLeft: 20}} defaultValue={3} character={({ index }) => customIcons[index + 1]} />                        </Form.Item>
+                        <Form.Item
+                            wrapperCol={{
+                                span: 14,
+                                offset: 6,
+                            }}
+                        >
+                            <Button htmlType="submit" type="primary">
+                                Submit
+                            </Button>
+                            <Button htmlType="button" onClick={() => {form.resetFields();}}>
+                                Reset
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+            </Drawer>
         </main>
     );
 };
