@@ -1,51 +1,42 @@
 {
-  "name": "igui",
-  "version": "0.2.0",
+  "name": "ebai_cloud_web",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@ant-design/charts": "latest",
     "@ant-design/icons": "latest",
-    "@ant-design/plots": "^1.2.2",
-    "@ant-design/pro-components": "^2.3.35",
-    "@ant-design/pro-form": "latest",
-    "@ant-design/pro-table": "latest",
+    "@ant-design/plots": "latest",
+    "@ant-design/pro-components": "latest",
     "@reduxjs/toolkit": "latest",
     "ahooks": "latest",
     "antd": "4",
     "axios": "latest",
     "compress-create-react-app": "latest",
     "http-proxy-middleware": "latest",
-    "rc-resize-observer": "^1.2.0",
+    "rc-resize-observer": "latest",
     "react": "latest",
     "react-amap": "latest",
     "react-dom": "latest",
     "react-redux": "latest",
     "react-router-dom": "latest",
     "react-scripts": "latest",
-    "react-uuid": "^2.0.0",
+    "react-uuid": "latest",
     "sass": "latest",
     "sass-loader": "latest",
     "xml2js": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && compress-cra -d dist",
+    "build": "react-scripts build && compress-cra -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
 }

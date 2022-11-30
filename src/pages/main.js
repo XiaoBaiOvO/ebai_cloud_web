@@ -1,7 +1,17 @@
-import {Button, Form, Space, Drawer, Spin, Mentions, Rate, Divider, Statistic} from "antd";
-import {DefaultFooter, ProCard, StatisticCard } from "@ant-design/pro-components";
+import {
+    Button,
+    Form,
+    Space,
+    Drawer,
+    Spin,
+    Mentions,
+    Rate,
+    Divider,
+    Statistic,
+    Layout, Card,
+} from "antd";
+import {DefaultFooter, StatisticCard } from "@ant-design/pro-components";
 import { Line } from '@ant-design/plots';
-import {Header} from "antd/es/layout/layout";
 import React, {useState} from "react";
 import {
     CloudFilled,
@@ -10,32 +20,39 @@ import {
     FrownOutlined,
     MehOutlined,
     SmileOutlined,
-    ExportOutlined
+    ExportOutlined, CopyrightOutlined,
 } from "@ant-design/icons";
 import Collection from "./collection/collection"
 import styles from "./main.module.scss"
 
+const { Header, Content, Footer } = Layout;
+
 const data = [
     {
-        "Date": "06:00",
-        "scales": 3
+        "Date": "17:00",
+        "scales": 1
     },
     {
-        "Date": "07:00",
-        "scales": 5
+        "Date": "17:15",
+        "scales": 2
     },
     {
-        "Date": "08:00",
+        "Date": "17:30",
+        "scales": 4
+    },
+    {
+        "Date": "17:45",
+        "scales": 6
+    },
+    {
+        "Date": "18:00",
+        "scales": 7
+    },
+    {
+        "Date": "18:15",
         "scales": 9
     },
-    {
-        "Date": "09:00",
-        "scales": 17
-    },
-    {
-        "Date": "10:00",
-        "scales": 18
-    }];
+    ];
 
 const config = {
     data,
@@ -44,7 +61,11 @@ const config = {
     yField: 'scales',
     xAxis: {
         // type: 'timeCat',
-        tickCount: 5,
+        tickCount: data.length,
+    },
+    yAxis: {
+        // type: 'timeCat',
+        tickCount: 6,
     },
 };
 
@@ -71,7 +92,15 @@ const Main = () => {
     };
 
     return (
-        <main className={styles.main}>
+        <Layout style={{alignItems: 'center', minHeight: document.documentElement.clientHeight - 1}}>
+            {/*<Alert*/}
+            {/*    style={{width: "100%"}}*/}
+            {/*    // message="网站适配存在一定缺陷，请不要使用智能设备访问，梦里啥都能连接"*/}
+            {/*    message="目前网页适配存在一定缺陷，如显示异常请切换浏览器或设备访问"*/}
+            {/*    type="warning"*/}
+            {/*    showIcon*/}
+            {/*    closable*/}
+            {/*/>*/}
             <Header
                 style={{
                     position: 'sticky',
@@ -81,42 +110,16 @@ const Main = () => {
                 }}
             >
                 <img alt="logo" src="/logo.png" width={40} style={{marginLeft: -30}}/>
-                <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工具站</span>
+                <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工作站</span>
                 <Space style={{position: "absolute", right: 20}}>
                     <Button style={{marginRight: 0}} ghost onClick={() => {setOpen(true)}}>数据统计</Button>
                 </Space>
             </Header>
-            <ProCard layout="center">
-                <Collection/>
-            </ProCard>
-            <DefaultFooter
-                style={{
-                    marginTop: -40,
-                    padding: 1,
-                    background: 'none',
-                }}
-                copyright={"2022 Ebai Cloud Workstations"}
-                links={[
-                    {
-                        key: 'Ebai Cloud Workstations',
-                        title: 'XiaoBai Yun',
-                        href: '',
-                        blankTarget: false,
-                    },
-                    {
-                        key: 'github',
-                        title: <CloudFilled />,
-                        href: '',
-                        blankTarget: false,
-                    },
-                    {
-                        key: 'Author',
-                        title: 'Ethan & Daisy',
-                        href: '',
-                        blankTarget: false,
-                    },
-                ]}
-            />
+            <Collection/>
+            <Footer style={{textAlign: 'center'}}>
+                <div>Ebai Cloud Work Stations <CloudFilled/> Daisy Huang & Xiaobai</div>
+                <div style={{marginTop: 10}}><CopyrightOutlined /> 2022 上师大地科2班开发组</div>
+            </Footer>
             <Drawer
                 placement="right"
                 onClose={() => {setOpen(false);}}
@@ -129,6 +132,10 @@ const Main = () => {
                     </Space>
                 }
             >
+                <Card>
+
+
+                </Card>
                 <div>
                     <StatisticCard
                         title={
@@ -141,14 +148,14 @@ const Main = () => {
                         statistic={{
                             // icon: <SettingTwoTone style={{ color: 'rgba(0,0,0,0.65)' }} spin />,
                             icon: <Spin />,
-                            value: 15,
+                            value: 9,
                             suffix: '人',
                             // title: '当前完成人数:',
                             prefix: '当前完成人数:',
                             description: (
                                 <Space>
-                                    <Statistic title="实际完成度:" value="75%" trend="up" />
-                                    <Statistic title="总人数:" value="20人" />
+                                    <Statistic title="实际完成度:" value="69.2%" trend="up" />
+                                    <Statistic title="总人数:" value="13人" />
                                 </Space>
                             ),
                         }}
@@ -252,7 +259,7 @@ const Main = () => {
                     </Form>
                 </div>
             </Drawer>
-        </main>
+        </Layout>
     );
 };
 

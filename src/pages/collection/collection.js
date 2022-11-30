@@ -1,10 +1,19 @@
-import { ProForm, ProFormRadio, ProFormSelect, ProFormText, CheckCard, ProCard} from '@ant-design/pro-components';
-import {message, Upload, Modal, Button, Space} from 'antd';
+import {
+    message,
+    Upload,
+    Modal,
+    Button,
+    Space,
+    Card,
+    Form,
+    Select, Input, Radio, Typography, Divider,
+} from 'antd';
 import {useRequest} from "ahooks";
 import {apiSubmitCollectionForm} from "../../api/api";
-import {DeleteOutlined, PlusOutlined} from "@ant-design/icons";
-import {useEffect, useRef, useState} from "react";
+import {AlertOutlined, DeleteOutlined, EllipsisOutlined, PlusOutlined} from "@ant-design/icons";
+import {useEffect, useState} from "react";
 import uuid from 'react-uuid';
+import {filetypes} from "compress-create-react-app/src/defaultConfig";
 
 const getBase64 = (file =>
 new Promise((resolve, reject) => {
@@ -14,28 +23,43 @@ new Promise((resolve, reject) => {
     reader.onerror = (error) => reject(error);
 }));
 
+const tabList = [
+    {
+        key: '核酸',
+        tab: '核酸检测截图',
+    },
+    {
+        key: '双码',
+        tab: '健康码&行程卡截图',
+    },
+];
+
+const validateMessages = {
+    required: '${label} 为必填项',
+};
+
 export default () => {
 
+    // API
     const {runAsync} = useRequest(apiSubmitCollectionForm, {manual: true});
-
+    // 上传预览
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
+    // 经纬度
     const [longitude, setLongitude] = useState(0);
     const [latitude, setLatitude] = useState(0);
-
+    // Form
+    const [form] = Form.useForm();
     const [formType, setFormType] = useState('核酸');
-
     const [isInputName, setIsInputName] = useState(true);
+    // 上传
     const [healthCodeFile, setHealthCodeFile] = useState([]);
     const [travelCodeFile, setTravelCodeFile] = useState([]);
     const [testScreenshotFile, setTestScreenshotFile] = useState([]);
     const [healthCodeFileId, setHealthCodeFileId] = useState('');
     const [travelCodeFileId, setTravelCodeFileId] = useState('');
     const [testScreenshotFileId, setTestScreenshotFileId] = useState('');
-
-    const formRef = useRef({});
-
 
     useEffect(async () => {
         navigator.geolocation.getCurrentPosition(
@@ -52,10 +76,7 @@ export default () => {
 
     const submitForm = async (values) => {
         values.formType = formType;
-        values.position = longitude + ',' + latitude;
-        values.healthCodeFileId = healthCodeFileId;
-        values.travelCodeFileId = travelCodeFileId;
-        values.testScreenshotFileId = testScreenshotFileId;
+        values.position = [longitude, latitude];
         runAsync(values).then((response) => {
             message.success(response.message);
         }).catch((e) => {
@@ -67,85 +88,45 @@ export default () => {
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
         }
-
         setPreviewImage(file.url || (file.preview));
         setPreviewOpen(true);
         setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1));
     };
 
-    const healthCodeFileChange = ({fileList}) => setHealthCodeFile(fileList);
-    const travelCodeFileChange = ({fileList}) => setTravelCodeFile(fileList);
-    const testScreenshotFileChange = ({fileList}) => setTestScreenshotFile(fileList);
-
-    const handleCancel = () => setPreviewOpen(false);
-
-    const healthCodeData = () => {
-        return {
-            formType: '双码',
-            fileType: '健康码',
-            name: formRef.current.getFieldValue('name'),
-            classNumber: formRef.current.getFieldValue('classNumber'),
-            fileId: healthCodeFileId
-        }
+    const healthCodeFileChange = ({fileList}) => {
+        setHealthCodeFile(fileList);
+        form.setFieldValue("healthCodeFile", healthCodeFileId);
+        form.setFieldValue("healthCodeFileValue", "健康码-" + form.getFieldValue("name") + "-" + healthCodeFileId);
+        form.setFieldValue("twoCodeFile", (form.getFieldValue("healthCodeFile") && form.getFieldValue("travelCodeFile")) ? [form.getFieldValue("healthCodeFile"), form.getFieldValue("travelCodeFile")] : "");
+        console.log(form.getFieldValue("twoCodeFile"));
     }
-
-    const travelCodeData = () => {
-        return {
-            formType: '双码',
-            fileType: '行程卡',
-            name: formRef.current.getFieldValue('name'),
-            classNumber: formRef.current.getFieldValue('classNumber'),
-            fileId: travelCodeFileId
-        }
+    const travelCodeFileChange = ({fileList}) => {
+        setTravelCodeFile(fileList);
+        form.setFieldValue("travelCodeFile", travelCodeFileId);
+        form.setFieldValue("travelCodeFileValue", "行程卡-" + form.getFieldValue("name") + "-" + travelCodeFileId);
+        form.setFieldValue("twoCodeFile", (form.getFieldValue("healthCodeFile") && form.getFieldValue("travelCodeFile")) ? [form.getFieldValue("healthCodeFile"), form.getFieldValue("travelCodeFile")] : "");
+        console.log(form.getFieldValue("twoCodeFile"));
     }
-
-    const testScreenshotData = () => {
-        return {
-            formType: '核酸',
-            fileType: '核酸检测截图',
-            name: formRef.current.getFieldValue('name'),
-            classNumber: formRef.current.getFieldValue('classNumber'),
-            fileId: testScreenshotFileId
-        }
+    const testScreenshotFileChange = ({fileList}) => {
+        setTestScreenshotFile(fileList);
+        form.setFieldValue("testScreenshotFile", testScreenshotFileId);
+        form.setFieldValue("testScreenshotFileValue", "核酸检测截图-" + form.getFieldValue("name") + "-" + testScreenshotFileId);
     }
-
-    const beforeHealthCodeUpload = () => setHealthCodeFileId(uuid())
-
-    const beforeTravelCodeUpload = () => setTravelCodeFileId(uuid())
-
-    const beforeTestScreenshotUpload = () => setTestScreenshotFileId(uuid())
-
-    const checkInputName = () => {
-        setIsInputName(formRef.current.getFieldValue('name') === '');
-    }
-
-    const uploadHeathCode = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>上传健康码</div>
-        </div>
-    );
-
-    const uploadTravelCode = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>上传行程卡</div>
-        </div>
-    );
-
-    const uploadTestScreenshot = (
-        <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>上传核酸截图</div>
-        </div>
-    );
 
     const twoCodeUpload = (
-        <ProForm.Group style={{width: 328}}>
-            <ProForm.Item label="健康码">
+        <Form.Item label="双码截图" name="twoCodeFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
+            <Input value={form.getFieldValue("healthCodeFileValue")} style={{width: "100%"}} disabled />
+            <Input value={form.getFieldValue("travelCodeFileValue")} style={{width: "100%"}} disabled />
+            <Space align="end" style={{marginTop: 15}}>
                 <Upload
-                    beforeUpload={beforeHealthCodeUpload}
-                    data={healthCodeData}
+                    beforeUpload={() => setHealthCodeFileId(uuid())}
+                    data={{
+                        formType: '双码',
+                        fileType: '健康码',
+                        name: form.getFieldValue("name"),
+                        classNumber: form.getFieldValue("classNumber"),
+                        fileId: healthCodeFileId
+                    }}
                     action="http://ebai.cloud:9000/api/upload"
                     listType="picture-card"
                     fileList={healthCodeFile}
@@ -153,41 +134,65 @@ export default () => {
                     onChange={healthCodeFileChange}
                     disabled={isInputName}
                 >
-                    {healthCodeFile.length >= 1 ? null : uploadHeathCode}
+                    {healthCodeFile.length >= 1 ? null : (
+                        <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8 }}>上传健康码</div>
+                        </div>
+                    )}
                 </Upload>
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-            </ProForm.Item>
-            <ProForm.Item label="行程卡">
-                <Space align="end">
-                    <Upload
-                        beforeUpload={beforeTravelCodeUpload}
-                        data={travelCodeData}
-                        action="http://ebai.cloud:9000/api/upload"
-                        listType="picture-card"
-                        fileList={travelCodeFile}
-                        onPreview={handlePreview}
-                        onChange={travelCodeFileChange}
-                        disabled={isInputName}
-                    >
-                        {travelCodeFile.length >= 1 ? null : uploadTravelCode}
-                    </Upload>
-                    <Button shape="circle" onClick={() => {setHealthCodeFile([]);setTravelCodeFile([])}} icon={<DeleteOutlined />} style={{marginBottom: 10}}/>
-                </Space>
-                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                </Modal>
-            </ProForm.Item>
-        </ProForm.Group>
+                <Upload
+                    beforeUpload={() => setTravelCodeFileId(uuid())}
+                    data={{
+                        formType: '双码',
+                        fileType: '行程卡',
+                        name: form.getFieldValue("name"),
+                        classNumber: form.getFieldValue("classNumber"),
+                        fileId: travelCodeFileId
+                    }}
+                    action="http://ebai.cloud:9000/api/upload"
+                    listType="picture-card"
+                    fileList={travelCodeFile}
+                    onPreview={handlePreview}
+                    onChange={travelCodeFileChange}
+                    disabled={isInputName}
+                >
+                    {travelCodeFile.length >= 1 ? null :
+                        <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8 }}>上传行程卡</div>
+                        </div>
+                    }
+                </Upload>
+                <Button shape="circle" onClick={() => {
+                        setHealthCodeFile([]);
+                        setTravelCodeFile([]);
+                        form.resetFields([
+                            "twoCodeFile",
+                            "healthCodeFile",
+                            "travelCodeFile",
+                            "healthCodeFileValue",
+                            "travelCodeFileValue"]);}}
+                    icon={<DeleteOutlined />}
+                    style={{marginBottom: 10}}
+                />
+            </Space>
+        </Form.Item>
     )
 
     const testScreenshotUpload = (
-        <ProForm.Item label="核酸检测截图" style={{width: 328}}>
-            <Space align="end">
+        <Form.Item label="核酸检测截图" name="testScreenshotFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
+            <Input value={form.getFieldValue("testScreenshotFileValue")} style={{width: "100%"}} disabled />
+            <Space align="end" style={{marginTop: 15}}>
                 <Upload
-                    beforeUpload={beforeTestScreenshotUpload}
-                    data={testScreenshotData}
+                    beforeUpload={() => setTestScreenshotFileId(uuid())}
+                    data={{
+                        formType: '核酸',
+                        fileType: '核酸检测截图',
+                        name: form.getFieldValue("name"),
+                        classNumber: form.getFieldValue("classNumber"),
+                        fileId: testScreenshotFileId
+                    }}
                     action="http://ebai.cloud:9000/api/upload"
                     listType="picture-card"
                     fileList={testScreenshotFile}
@@ -195,82 +200,112 @@ export default () => {
                     onChange={testScreenshotFileChange}
                     disabled={isInputName}
                 >
-                    {testScreenshotFile.length >= 1 ? null : uploadTestScreenshot}
+                    {testScreenshotFile.length >= 1 ? null : (
+                        <div>
+                            <PlusOutlined />
+                            <div style={{ marginTop: 8 }}>上传核酸截图</div>
+                        </div>
+                    )}
                 </Upload>
-                <Button shape="circle" onClick={() => {setTestScreenshotFile([])}} icon={<DeleteOutlined />} style={{marginBottom: 10}}/>
+                <Button
+                    shape="circle"
+                    onClick={() => {
+                        setTestScreenshotFile([]);
+                        form.resetFields(["testScreenshotFile", "testScreenshotFileValue"])}}
+                    icon={<DeleteOutlined />}
+                    style={{marginBottom: 10}}
+                />
             </Space>
-            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancel}>
-                <img alt="example" style={{ width: '100%' }} src={previewImage} />
-            </Modal>
-        </ProForm.Item>
+        </Form.Item>
     )
 
     return (
-        <div>
-            <ProCard title="收集类型:" bordered layout={"center"}>
-                <CheckCard.Group
-                    onChange={(value) => {
-                        setFormType(value)
-                    }}
-                    defaultValue="核酸"
-                >
-                    <CheckCard title="健康码&行程卡" description="每周一收集" value="双码" />
-                    <CheckCard title="核酸检测截图" description="间隔一天收集" value="核酸" />
-
-                </CheckCard.Group>
-            </ProCard>
-        <ProCard bordered title="填写信息:" style={{marginTop: 10}}>
-            <ProForm
-
-                onReset={() => {
-                    setHealthCodeFile([]);
-                    setTravelCodeFile([]);
-                    setTestScreenshotFile([]);
+        <Card
+            style={{
+                width: '100%',
+                maxWidth: 700,
+            }}
+            tabList={tabList}
+            activeTabKey={formType}
+            tabBarExtraContent={<EllipsisOutlined />}
+            onTabChange={(key) => setFormType(key)}
+        >
+            <Form
+                labelCol={{span: 5}}
+                initialValues={{
+                    classNumber: "地科2班",
+                    location: "在家",
+                    healthCodeFileValue: "健康码截图: <待上传>",
+                    travelCodeFileValue: "行程卡截图: <待上传>",
+                    testScreenshotFileValue: "核酸检测截图: <待上传>"
                 }}
+                form={form}
                 onFinish={submitForm}
-                params={{}}
-                submitter={false}
-                formRef={formRef}
-                request={async () => {
-                return {
-                    classNumber: '地科2班',
-                    location: '在家',
-                    name: ''
-                };
-            }}>
-                <ProForm.Group>
-                <ProFormSelect options={[
-                    {
-                        value: '地科1班',
-                        label: '地科1班',
-                    },
-                    {
-                        value: '地科2班',
-                        label: '地科2班',
-                    },
-                ]} width="md" name="classNumber" label="班级"/>
-                <ProFormText width="md" name="name" label="姓名" placeholder="请输入姓名后 再上传文件" onChange={checkInputName}/>
-                </ProForm.Group>
-                <ProForm.Group>
-                    <div style={{width: 328}}>
-                        <ProFormRadio.Group label="居住地" name="location" options={['在校', '在家', '居无定所']}/>
-                    </div>
-                    {formType === "双码" ? twoCodeUpload : testScreenshotUpload}
-                </ProForm.Group>
-                <ProForm.Item style={{textAlign: "center"}}>
-                    <Button htmlType="submit" type="primary" style={{marginRight: 10, width: "70%"}}>
+                onValuesChange={() =>
+                    setIsInputName(
+                        form.getFieldValue("name") === '' ||
+                        form.getFieldValue("name") === undefined ||
+                        form.getFieldValue("name") === null)
+                }
+                validateMessages={{
+                    required: '${label}为必填项',
+                }}
+            >
+                <Form.Item label="姓名" name="name" rules={[{required: true}]}>
+                    <Input style={{width: "100%"}} placeholder="请输入姓名后 再上传文件" />
+                </Form.Item>
+                <Form.Item label="班级" name="classNumber" rules={[{required: true}]}>
+                    <Select
+                        dropdownRender={(menu) => (
+                            <>
+                                {menu}
+                                <Divider
+                                    style={{
+                                        margin: 8,
+                                    }}
+                                />
+                                <Button type="text" icon={<AlertOutlined />} disabled>
+                                    增加班级请联系 => 黄敏倩
+                                </Button>
+                            </>
+                        )}>
+                        <Select.Option value="地科1班">地科1班</Select.Option>
+                        <Select.Option value="地科2班">地科2班</Select.Option>
+                        <Select.Option value="小白云开发开发组">小白云开发开发组</Select.Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item label="居住情况" name="location" rules={[{required: true}]}>
+                    <Radio.Group>
+                        <Radio value="在校">在校</Radio>
+                        <Radio value="在家">在家</Radio>
+                        <Radio value="居无定所">居无定所</Radio>
+                    </Radio.Group>
+                </Form.Item>
+                {formType === "双码" ? twoCodeUpload : testScreenshotUpload}
+                <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
+                <div style={{width: "100%", textAlign: "center"}}>
+                    <Button
+                        htmlType="submit"
+                        type="primary"
+                        style={{marginRight: 5, width: "70%"}}
+                    >
                         提交
                     </Button>
-                    <Button htmlType="reset" onClick={() => {
+                    <Button
+                        htmlType="reset" onClick={() => {
                             setHealthCodeFile([]);
                             setTravelCodeFile([]);
                             setTestScreenshotFile([]);
-                        }} style={{width: "20%"}}>
+                            form.resetFields();
+                        }}
+                        style={{marginLeft: 5, width: "20%"}}
+                    >
                         重置
                     </Button>
-                </ProForm.Item>
-            </ProForm>
-        </ProCard>
-        </div>
-    );
+                </div>
+            </Form>
+        </Card>
+    )
 };
