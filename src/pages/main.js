@@ -11,6 +11,8 @@ import {
     Layout, Card, Select, Dropdown, message, List, Avatar, Cascader, DatePicker,
 } from "antd";
 import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import styles from "./main.module.scss";
 import {
     CloudFilled,
     RightOutlined,
@@ -22,10 +24,11 @@ import {
 } from "@ant-design/icons";
 import Collection from "./collection/collection"
 import {useRequest} from "ahooks";
-import {apiGetCollectionDataList} from "../api/api";
+import {getCollectionDataList} from "../api";
 
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import MyFooter from "./Commponents/MyFooter";
 dayjs.extend(customParseFormat);
 const dateFormat = 'YYYY-MM-DD';
 
@@ -89,14 +92,11 @@ const Main = () => {
 
     const [open, setOpen] = useState(false);
     const [form] = Form.useForm();
-    const {runAsync} = useRequest(apiGetCollectionDataList, {manual: true});
+    const navigate = useNavigate();
+    const {runAsync} = useRequest(getCollectionDataList, {manual: true});
     const [dateList, setDataList] = useState();
 
-    useEffect(async () => {
-        // form.setFieldValue("queryRequest", ["地科2班", "核酸检测截图"])
-    }, []);
-
-    const getCollectionDataList = (classNumber, formType, date) => {
+    const getCollectionData = (classNumber, formType, date) => {
         const request = {
             formType: formType,
             classNumber: classNumber,
@@ -105,13 +105,13 @@ const Main = () => {
         runAsync(request).then((response) => {
             setDataList(response.resultObject.dataList)
         }).catch((e) => {
-            message.error(e).then(r => {})
+            message.error(e).then(() => {})
         });
     };
 
     const updateQueryRequest = async () => {
         console.log(form.getFieldValue("date"))
-        getCollectionDataList(
+        getCollectionData(
             form.getFieldValue("queryRequest")[0],
             form.getFieldValue("queryRequest")[1],
             form.getFieldValue("date"))
@@ -126,21 +126,8 @@ const Main = () => {
         }
     };
 
-    const onChangeClass =  async () => {
-        getCollectionDataList().then(() => {
-            // message.success("已更新 " + classNumber + "-"+ formType + " 收集数据");
-        });
-    };
-
-    const onChangeDate = async (date, dateString) => {
-        getCollectionDataList().then(() => {
-            message.success("已更新 " + dateString + " 收集数据");
-        });
-    };
-
-
     return (
-        <Layout style={{alignItems: 'center', minHeight: document.documentElement.clientHeight - 1, grayscale: "100%"}}>
+        <Layout style={{alignItems: 'center', minHeight: document.documentElement.clientHeight - 1}}>
             {/*<Alert*/}
             {/*    style={{width: "100%"}}*/}
             {/*    // message="网站适配存在一定缺陷，请不要使用智能设备访问，梦里啥都能连接"*/}
@@ -160,16 +147,12 @@ const Main = () => {
                 <img alt="logo" src="/logo.png" width={40} style={{marginLeft: -30}}/>
                 <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工作站</span>
                 <Space style={{position: "absolute", right: 20}}>
-                    <Button style={{marginRight: 0}} ghost onClick={() => {
-                        setOpen(true)
-                    }}>数据统计</Button>
+                    <Button ghost onClick={() => {navigate("/login")}}>管理页面</Button>
+                    <Button ghost onClick={() => {setOpen(true)}}>数据统计</Button>
                 </Space>
             </Header>
             <Collection/>
-            <Footer style={{textAlign: 'center'}}>
-                <div>Ebai Cloud Work Stations <CloudFilled/> Daisy Huang & Xiaobai</div>
-                <div style={{marginTop: 10}}><CopyrightOutlined/> 2022 上师大地科2班开发组</div>
-            </Footer>
+            <MyFooter/>
             <Drawer
                 placement="right"
                 onClose={() => {

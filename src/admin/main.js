@@ -10,6 +10,7 @@ import {
 } from 'antd';
 import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
 import {menu} from "../config/config";
+import MyFooter from "../pages/Commponents/MyFooter";
 
 const { Header, Content, Sider } = Layout;
 
@@ -113,6 +114,7 @@ const Main = () => {
                     >
                         {<Outlet/>}
                     </Content>
+                    <MyFooter/>
                 </Layout>
             </Layout>
         </Layout>
