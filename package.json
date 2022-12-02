@@ -12,6 +12,7 @@
     "antd": "4",
     "axios": "latest",
     "compress-create-react-app": "latest",
+    "dayjs": "latest",
     "http-proxy-middleware": "latest",
     "rc-resize-observer": "latest",
     "react": "latest",

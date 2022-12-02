@@ -11,6 +11,8 @@ export const initAxios = dispatch => {
 
 export const apiSubmitCollectionForm = async (params) => (await axios.post("submitCollectionForm", params)).data;
 
+export const apiGetCollectionDataList = async (params) => (await axios.post("collection/getCollectedStatus", params)).data;
+
 export const apiUploadFile = async (body) => (await axios.post("upload", body)).data;
 
 export const apiGetUser = async () => (await axios.get("currentUser"));

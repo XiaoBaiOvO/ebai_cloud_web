@@ -17,5 +17,6 @@ export {
     apiGetLLDP,
     apiRpc,
     apiGetModelTableData,
-    apiSubmitCollectionForm
+    apiSubmitCollectionForm,
+    apiGetCollectionDataList
 } from "./api_ne";
