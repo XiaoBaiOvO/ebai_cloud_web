@@ -1,3 +1,4 @@
+import {useEffect, useState} from "react";
 import {
     message,
     Upload,
@@ -6,14 +7,22 @@ import {
     Space,
     Card,
     Form,
-    Select, Input, Radio, Typography, Divider,
+    Select,
+    Input,
+    Radio,
+    Divider,
 } from 'antd';
+import {
+    AlertOutlined,
+    DeleteOutlined,
+    EllipsisOutlined,
+    PlusOutlined
+} from "@ant-design/icons";
+
 import {useRequest} from "ahooks";
-import {apiSubmitCollectionForm} from "../../api/api";
-import {AlertOutlined, DeleteOutlined, EllipsisOutlined, PlusOutlined} from "@ant-design/icons";
-import {useEffect, useState} from "react";
+import {submitCollectionForm} from "../../api";
+
 import uuid from 'react-uuid';
-import {filetypes} from "compress-create-react-app/src/defaultConfig";
 
 const getBase64 = (file =>
 new Promise((resolve, reject) => {
@@ -41,7 +50,7 @@ const validateMessages = {
 export default () => {
 
     // API
-    const {runAsync} = useRequest(apiSubmitCollectionForm, {manual: true});
+    const {runAsync} = useRequest(submitCollectionForm, {manual: true});
     // 上传预览
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
@@ -60,19 +69,6 @@ export default () => {
     const [healthCodeFileId, setHealthCodeFileId] = useState('');
     const [travelCodeFileId, setTravelCodeFileId] = useState('');
     const [testScreenshotFileId, setTestScreenshotFileId] = useState('');
-
-    useEffect(async () => {
-        navigator.geolocation.getCurrentPosition(
-            position => {
-                setLongitude(position.coords.longitude)//经度
-                setLatitude(position.coords.latitude)//纬度
-                // console.log(position.coords.longitude + ',' + position.coords.latitude)
-                // message.success(position.coords.longitude + ',' + position.coords.latitude);
-            // },
-            // err => {
-                // message.error(err.message);
-            });
-    }, []);
 
     const submitForm = async (values) => {
         values.formType = formType;
@@ -115,6 +111,7 @@ export default () => {
 
     const twoCodeUpload = (
         <Form.Item label="双码截图" name="twoCodeFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
+            <div>
             <Input value={form.getFieldValue("healthCodeFileValue")} style={{width: "100%"}} disabled />
             <Input value={form.getFieldValue("travelCodeFileValue")} style={{width: "100%"}} disabled />
             <Space align="end" style={{marginTop: 15}}>
@@ -177,11 +174,13 @@ export default () => {
                     style={{marginBottom: 10}}
                 />
             </Space>
+            </div>
         </Form.Item>
     )
 
     const testScreenshotUpload = (
         <Form.Item label="核酸检测截图" name="testScreenshotFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
+            <div>
             <Input value={form.getFieldValue("testScreenshotFileValue")} style={{width: "100%"}} disabled />
             <Space align="end" style={{marginTop: 15}}>
                 <Upload
@@ -216,6 +215,7 @@ export default () => {
                     style={{marginBottom: 10}}
                 />
             </Space>
+            </div>
         </Form.Item>
     )
 
