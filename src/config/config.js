@@ -1,46 +1,104 @@
+import React from "react";
+// 图标
 import {
-    AlertOutlined,
-    BarChartOutlined,
-    BranchesOutlined,
     DashboardOutlined,
-    DeploymentUnitOutlined,
-    HddOutlined, RocketOutlined
+    DeliveredProcedureOutlined,
+    HomeOutlined,
+    InboxOutlined,
+    ProfileOutlined,
 } from "@ant-design/icons";
 
-import Login from "../pages/login/login";
-import Main from "../pages/main";
-import React from "react";
+// 首页
+import Pages from "../pages/main";
 
+// 登录
+import Login from "../pages/login";
 
+// 管理页面
+import Admin from "../admin/main"
+
+import Home from "../admin/Home"
+import Dashboard from "../admin/Dashboard"
+import CollectionDetail from "../admin/CollectionDetail"
+import CollectionReport from "../admin/CollectionReport"
+import Result404 from "../pages/Result/404"
+
+// 路由表
 export const routes = [
-    {path: "/login", element: <Login/>}, {
-        path: "/", element: <Main/>,
+    {
+        path: "/login",
+        element: <Login/>,
+    },
+    {
+        path: "/admin",
+        element: <Admin/>,
         children: [
-            {index: true, element: <h1 style={{color: "blue"}}>Index</h1>},
-            {path: "dashboard", element: <h1 style={{color: "green"}}>Dashboard</h1>},
-            {path: "*", element: <h1 style={{color: "red"}}>Bad Link</h1>}
+            {
+                index: true,
+                element: <Home/>
+            },
+            {
+                path: "dashboard",
+                element: <Dashboard/>
+            },
+            {
+                path: "collectionDetail",
+                element: <CollectionDetail/>
+            },
+            {
+                path: "collectionReport",
+                element: <CollectionReport/>
+            },
+            {
+                path: "*",
+                element: <Result404/>
+            }
         ]
+    },
+    {
+        path: "/",
+        element: <Pages/>,
+    },
+    {
+        path: "*",
+        element: <Result404/>,
     }
+
 ];
 
+// 菜单栏
 export const menu = [
-    {name: "仪表盘", key: "dashboard", icon: <DashboardOutlined/>},
     {
-        name: "告警和事件", key: "fault", icon: <AlertOutlined/>, child: [
-            {name: "告警管理", key: "alarm"},
-            {name: "事件查看", key: "event"}
+        key: "home",
+        icon: <HomeOutlined/>,
+        label: "主页",
+        children: [
+            {
+                key: "",
+                label: "主页",
+            },
+            {
+                key: "dashboard",
+                label: "Dashboard",
+                icon: <DashboardOutlined/>,
+            }
         ]
     },
     {
-        name: "性能管理", key: "performance", icon: <BarChartOutlined/>, child: [
-            {name: "监控点管理", key: "pmp"},
-            {name: "阈值穿越警报", key: "tca"},
-            {name: "性能管理", key: "pm"}
+        key: "collection",
+        icon: <InboxOutlined />,
+        label: "表单收集",
+        children: [
+            {
+                key: "collectionDetail",
+                label: "收集情况查询",
+                icon: <ProfileOutlined />,
+            },
+            {
+                key: "collectionReport",
+                label: "汇总报告",
+                icon: <DeliveredProcedureOutlined />,
+            }
         ]
     },
-    {name: "业务管理", key: "service", icon: <BranchesOutlined/>},
-    {name: "系统管理", key: "system", icon: <HddOutlined/>},
-    {name: "LLDP", key: "lldp", icon: <DeploymentUnitOutlined/>},
-    {name: "系统操作", key: "operation", icon: <RocketOutlined/>},
-    {name: "源数据", key: "originalData", icon: <RocketOutlined/>},
-];
+]
