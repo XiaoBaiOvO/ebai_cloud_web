@@ -9,58 +9,29 @@ export const initAxios = dispatch => {
     };
 };
 
-export const submitCollectionForm = async (body) => (await axios.post("submitCollectionForm", body)).data;
-
-export const getNewsList = async (body) => (await axios.post("getNewsList", body)).data;
-export const getCommentList = async (body) => (await axios.post("comment/getCommentList", body)).data;
-export const dislikeComment = async (body) => (await axios.post("comment/dislike", body)).data;
+// Collection
+export const submitCollectionForm = async (params) => (await axios.post("submitCollectionForm", params)).data;
+export const getCollectionDataList = async (params) => (await axios.post("collection/getCollectedStatus", params)).data;
+// News
+export const getNewsList = async () => (await axios.post("getNewsList")).data;
+// ChatBox
+export const getCommentList = async () => (await axios.post("comment/getCommentList")).data;
 export const commentAdd = async (body) => (await axios.post("comment/add", body)).data;
 export const commentReply = async (body) => (await axios.post("comment/reply", body)).data;
 export const likeComment = async (body) => (await axios.post("comment/like", body)).data;
+export const dislikeComment = async (body) => (await axios.post("comment/dislike", body)).data;
 
-export const apiGetCollectionDataList = async (params) => (await axios.post("collection/getCollectedStatus", params)).data;
 
-export const apiUploadFile = async (body) => (await axios.post("upload", body)).data;
-
-export const apiGetUser = async () => (await axios.get("currentUser"));
-
-export const apiLogin = async userInfo => (await axios.post("login/account", userInfo)).data;
-
-export const apiLogout = async () => (await axios.post("login/outLogin")).data;
-
-export const apiEditRpc = async (params) => (await axios.post('editRpc', params)).data;
-
-export const apiCallRpc = async (params) => (await axios.post('rpc', params)).data;
+export const demo1 = async () => (await axios.get("1"));
+export const demo2 = async body => (await axios.post("1", body)).data;
+export const demo3 = async (body) => (await axios.post("1", body)).data;
+export const demo4 = async () => (await axios.post("1",
+    {
+        test: ""
+    })).data;
 
 export const apiFetchData = async (params) => (await axios.post("fetchData", params)).data;
-
 export const apiGetNE = async () => (await axios.post("fetchData", {components: {component: ""}})).data;
-
-export const apiSystem = async () => (await axios.post("fetchData", {
-    system: {
-        state: "",
-        memory: "",
-        cpus: ""
-    }
-})).data;
-
-export const apiSystemAllConfig = async () => (await axios.post("fetchData", {
-    system: {
-        config: "",
-        state: "",
-        clock: "",
-        ntp: ""
-    }
-})).data;
-
-export const apiGetAlarms = async () => (await axios.post("fetchData", {system: {alarms: ""}})).data;
-
-export const apiGetPMPs = async () => (await axios.post("fetchData", {performance: {pmps: {pmp: ""}}})).data;
-
-export const apiGetEnabledPMPs = async () => (await axios.post("fetchData", {performance: {pmps: {pmp: {'pm-point-enable': true}}}})).data;
-
-export const apiGetTCAs = async () => (await axios.post("fetchData", {performance: {tcas: {tca: ""}}})).data;
-
 export const apiGetServiceData = async () => {
     const data1 = await apiGetNE();
     if (data1.result) {
@@ -76,14 +47,8 @@ export const apiGetServiceData = async () => {
             }
         }
     }
-
     return null;
 }
-
-export const apiGetLLDP = async () => (await axios.post("fetchData", {lldp: ""})).data;
-
-export const apiRpc = async (params) => (await axios.post("/rpc", params)).data;
-
 export const apiGetModelTableData = async () => {
     const data1 = await apiGetNE();
     const data2 = await apiGetServiceData();
