@@ -1,11 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
-import faultReducer from "./faultSlice";
+import testReducer from "./testReducer";
 
 const store = configureStore({
     reducer: {
         user: userReducer,
-        fault: faultReducer
+        test: testReducer
     }
 });
 

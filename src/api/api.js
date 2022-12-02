@@ -2,7 +2,7 @@ import axios from "axios";
 import {setUserName} from "../redux/userSlice";
 
 export const initAxios = dispatch => {
-    axios.defaults.baseURL = "api";
+    axios.defaults.baseURL = "/api";
     axios.defaults.validateStatus = status => {
         [401, 500].includes(status) && dispatch(setUserName(""));
         return true;

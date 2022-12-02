@@ -1,38 +1,42 @@
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {useRequest} from "ahooks";
 import {
     Button,
     Form,
     Space,
     Drawer,
-    Spin,
     Mentions,
     Rate,
     Divider,
-    Statistic,
-    Layout, Card, Select, Dropdown, message, List, Avatar, Cascader, DatePicker,
+    Layout,
+    Card,
+    message,
+    List,
+    Cascader,
+    DatePicker,
 } from "antd";
-import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import styles from "./main.module.scss";
 import {
-    CloudFilled,
-    RightOutlined,
-    EllipsisOutlined,
     FrownOutlined,
     MehOutlined,
     SmileOutlined,
-    ExportOutlined, CopyrightOutlined, DoubleLeftOutlined, DownOutlined, CheckOutlined, UserOutlined, CloseOutlined,
+    ExportOutlined,
+    CheckOutlined,
+    UserOutlined,
+    CloseOutlined,
 } from "@ant-design/icons";
-import Collection from "./collection/collection"
-import {useRequest} from "ahooks";
+
 import {getCollectionDataList} from "../api";
+
+import Collection from "./collection/collection"
+import MyFooter from "./Commponents/MyFooter";
 
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import MyFooter from "./Commponents/MyFooter";
 dayjs.extend(customParseFormat);
-const dateFormat = 'YYYY-MM-DD';
 
-const { Header, Footer } = Layout;
+const {Header} = Layout;
+const dateFormat = 'YYYY-MM-DD';
 
 const options = [
     {
@@ -41,11 +45,11 @@ const options = [
         children: [
             {
                 value: '核酸检测截图',
-                label: ' 核酸',
+                label: '核酸检测截图',
             },
             {
                 value: '双码',
-                label: ' 双码',
+                label: '双码',
             }
         ],
     },
@@ -55,30 +59,15 @@ const options = [
         children: [
             {
                 value: '核酸检测截图',
-                label: ' 核酸',
+                label: '核酸检测截图',
             },
             {
                 value: '双码',
-                label: ' 双码',
+                label: '双码',
             }
         ],
     },
 ];
-
-// const config = {
-//     data,
-//     padding: 'auto',
-//     xField: 'Date',
-//     yField: 'scales',
-//     xAxis: {
-//         // type: 'timeCat',
-//         tickCount: data.length,
-//     },
-//     yAxis: {
-//         // type: 'timeCat',
-//         tickCount: 6,
-//     },
-// };
 
 const customIcons = {
     1: <FrownOutlined />,
@@ -109,8 +98,11 @@ const Main = () => {
         });
     };
 
+    useEffect(() => {
+        getCollectionData("地科2班", "核酸检测截图", dayjs())
+    }, [])
+
     const updateQueryRequest = async () => {
-        console.log(form.getFieldValue("date"))
         getCollectionData(
             form.getFieldValue("queryRequest")[0],
             form.getFieldValue("queryRequest")[1],
@@ -128,14 +120,6 @@ const Main = () => {
 
     return (
         <Layout style={{alignItems: 'center', minHeight: document.documentElement.clientHeight - 1}}>
-            {/*<Alert*/}
-            {/*    style={{width: "100%"}}*/}
-            {/*    // message="网站适配存在一定缺陷，请不要使用智能设备访问，梦里啥都能连接"*/}
-            {/*    message="目前网页适配存在一定缺陷，如显示异常请切换浏览器或设备访问"*/}
-            {/*    type="warning"*/}
-            {/*    showIcon*/}
-            {/*    closable*/}
-            {/*/>*/}
             <Header
                 style={{
                     position: 'sticky',
@@ -147,8 +131,15 @@ const Main = () => {
                 <img alt="logo" src="/logo.png" width={40} style={{marginLeft: -30}}/>
                 <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工作站</span>
                 <Space style={{position: "absolute", right: 20}}>
-                    <Button ghost onClick={() => {navigate("/login")}}>管理页面</Button>
-                    <Button ghost onClick={() => {setOpen(true)}}>数据统计</Button>
+                    <Button ghost onClick={() => {
+                        navigate("/login");
+                    }}>管理页面</Button>
+                    <Button ghost onClick={() => {
+                        setOpen(true);
+                        setTimeout(() => {
+                            updateQueryRequest().then(() => {})
+                        },100);
+                    }}>数据统计</Button>
                 </Space>
             </Header>
             <Collection/>
@@ -169,39 +160,26 @@ const Main = () => {
                     </Space>
                 }
             >
+                <Divider orientation="left">快捷查询</Divider>
                 <Form
                     onValuesChange={updateQueryRequest}
                     form={form}
+                    style={{width: "100%"}}
                     layout="inline"
                     initialValues={{
                         queryRequest: ["地科2班", "核酸检测截图"],
                         date: dayjs()
                     }}
                 >
-                    <Space>
-                        <Form.Item name="queryRequest">
-                            <Cascader options={options} style={{width: 195}}/>
+                    <Space.Compact block>
+                        <Form.Item name="queryRequest" style={{width: 197, margin: 0}}>
+                            <Cascader options={options}/>
                         </Form.Item>
-                        <Form.Item name="date">
-                            <DatePicker
-                                suffixIcon={null}
-                                allowClear={false}
-                                style={{width: 110}}
-                                placeholder="请选择日期"
-                                format={dateFormat}
-                                disabled />
+                        <Form.Item name="date" style={{width: 115, margin: 0}}>
+                            <DatePicker allowClear={false} placeholder="请选择日期" format={dateFormat}/>
                         </Form.Item>
-                    </Space>
+                    </Space.Compact>
                 </Form>
-                {/*<Space>*/}
-                {/*    <Cascader*/}
-                {/*        defaultValue={"请选择"}*/}
-                {/*        options={options}*/}
-                {/*        onChange={onChangeClass}/>*/}
-                {/*    <DatePicker*/}
-                {/*        onChange={onChangeDate}/>*/}
-                {/*</Space>*/}
-
                 <Card size="small">
                     <List
                         itemLayout="horizontal"
@@ -214,44 +192,15 @@ const Main = () => {
                                 />
                                 {item.time !== null ? (
                                     <>
-                                        <a>{item.time}</a>
-                                        <CheckOutlined/>
+                                        <a>{item.time.substring(0, 8)}</a>
+                                        <CheckOutlined style={{marginLeft: 20}}/>
                                     </>) : <CloseOutlined/>}
                             </List.Item>
                         )}
                     />
                 </Card>
-
-
-                <Divider type='horizontal'/>
+                <Divider orientation="left">用户调查</Divider>
                 <div>
-                    {/*<StatisticCard*/}
-                    {/*    title={*/}
-                    {/*        <Space>*/}
-                    {/*            <span>地科2班</span>*/}
-                    {/*            <RightOutlined style={{ color: 'rgba(0,0,0,0.65)' }} />*/}
-                    {/*        </Space>*/}
-                    {/*    }*/}
-                    {/*    extra={<EllipsisOutlined />}*/}
-                    {/*    statistic={{*/}
-                    {/*        // icon: <SettingTwoTone style={{ color: 'rgba(0,0,0,0.65)' }} spin />,*/}
-                    {/*        icon: <Spin />,*/}
-                    {/*        value: 9,*/}
-                    {/*        suffix: '人',*/}
-                    {/*        // title: '当前完成人数:',*/}
-                    {/*        prefix: '当前完成人数:',*/}
-                    {/*        description: (*/}
-                    {/*            <Space>*/}
-                    {/*                <Statistic title="实际完成度:" value="69.2%" trend="up" />*/}
-                    {/*                <Statistic title="总人数:" value="13人" />*/}
-                    {/*            </Space>*/}
-                    {/*        ),*/}
-                    {/*    }}*/}
-                    {/*    chart={*/}
-                    {/*        <Line {...config} style={{height: 150}} />*/}
-                    {/*        }*/}
-                    {/*/>*/}
-                    <Divider type='horizontal'/>
                     <Form layout="horizontal" onFinish={onFinish}>
                         <Form.Item
                             name="coders"
@@ -329,9 +278,14 @@ const Main = () => {
                             wrapperCol={{
                                 span: 16,
                             }}
+                            label="打分"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
                         >
-                            打分<Rate style={{marginLeft: 20}} defaultValue={3}
-                                      character={({index}) => customIcons[index + 1]}/> </Form.Item>
+                            <Rate style={{marginLeft: 20}} defaultValue={5} character={({index}) => customIcons[index + 1]}/> </Form.Item>
                         <Form.Item
                             wrapperCol={{
                                 span: 14,
@@ -339,12 +293,12 @@ const Main = () => {
                             }}
                         >
                             <Button htmlType="submit" type="primary">
-                                Submit
+                                提交
                             </Button>
                             <Button htmlType="button" onClick={() => {
                                 form.resetFields();
                             }}>
-                                Reset
+                                重置
                             </Button>
                         </Form.Item>
                     </Form>
