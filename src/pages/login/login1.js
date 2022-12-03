@@ -1,13 +1,14 @@
 import { AlipayCircleOutlined, LockOutlined, MobileOutlined, TaobaoCircleOutlined, UserOutlined, WeiboCircleOutlined, } from '@ant-design/icons';
 import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText, } from '@ant-design/pro-components';
-import {Layout, message, Space, Tabs} from 'antd';
-import { useState } from 'react';
+import {Layout, message, Modal, Space, Spin, Tabs} from 'antd';
+import { useEffect, useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import MyFooter from "../Commponents/MyFooter";
 import {useRequest} from "ahooks";
 import {currentUserRequest, loginRequest} from "../../api";
 import {useDispatch, useSelector} from "react-redux";
 import {setUserId, setUserName, setUserAvatar, setUserData} from "../../redux/userSlice";
+import styles from "./login.module.scss";
 
 const iconStyles = {
     marginInlineStart: '16px',
@@ -27,6 +28,29 @@ export default () => {
 
     const {runAsync: doCurrentUser} = useRequest(currentUserRequest, {manual: true});
 
+    useEffect(() => checkCurrentUser())
+    const checkCurrentUser = () => {
+        let secondsToGo = 3;
+        const modal = Modal.success({
+            title: '已登录',
+            content: `页面将在 ${secondsToGo} 秒后跳转`,
+            onOk() {
+                navigate("/admin")
+            },
+        });
+        const timer = setInterval(() => {
+            secondsToGo -= 1;
+            modal.update({
+                content: `页面将在 ${secondsToGo} 秒后跳转`,
+            });
+        }, 1000);
+        setTimeout(() => {
+            clearInterval(timer);
+            modal.destroy();
+            navigate("/admin")
+        }, secondsToGo * 1000);
+    };
+
     const onFinish = (values) => {
         values.loginType = loginType
         doLogin(values)
@@ -34,10 +58,10 @@ export default () => {
                 if (response.code === 1) {
                     // Success
                     dispatch(setUserId(response.resultObject.userId))
-                    // dispatch(setUserName(response.resultObject.userName))
-                    // dispatch(setUserAvatar(response.resultObject.userAvatar))
+                    dispatch(setUserName(response.resultObject.userName))
+                    dispatch(setUserAvatar(response.resultObject.userAvatar))
                     // dispatch(setUserData(response.resultObject))
-                    // message.success(response.description).then(navigate("/admin"))
+                    message.success(response.description).then(navigate("/admin"))
                 } else if (response.code === 99) {
                     // Fail
                     message.error(response.description).then()
@@ -46,17 +70,13 @@ export default () => {
                 }
             })
         return null;
-
-        // if (values.username === "admin" && values.password === "admin") {
-        //     navigate("/admin")
-        // }
     }
 
 
     return (
-        <Layout style={{minHeight: document.documentElement.clientHeight - 1}}>
+        <Spin spinning={false}>
+        <Layout className={styles.loginLayout} style={{minHeight: document.documentElement.clientHeight - 1}}>
             <div style={{marginTop: 100}}>
-                {userName}|{userId}|{userAvatar}
                 <LoginForm
                     logo={<img alt="logo" src="/logo.png" />}
                     title="小白云工作站"
@@ -112,14 +132,16 @@ export default () => {
                                 message: '手机号格式错误！',
                             },
                         ]}/>
-                        <ProFormCaptcha fieldProps={{
-                            size: 'large',
-                            prefix: <LockOutlined className={'prefixIcon'}/>,
-                        }} captchaProps={{
+                        <ProFormCaptcha
+                            fieldProps={{
+                                size: 'large',
+                                prefix: <LockOutlined className={'prefixIcon'}/>,
+                            }}
+                            captchaProps={{
                             size: 'large',
                         }} placeholder={'请输入验证码'} captchaTextRender={(timing, count) => {
                             if (timing) {
-                                return `${count} ${'获取验证码'}`;
+                                return `${count} 获取验证码`;
                             }
                             return '获取验证码';
                         }} name="captcha" rules={[
@@ -146,5 +168,6 @@ export default () => {
                 </LoginForm>
             </div>
             <MyFooter/>
-        </Layout>);
+        </Layout>
+        </Spin>);
 };

@@ -12,7 +12,7 @@ import {
 import Pages from "../pages/main";
 
 // 登录
-import Login from "../pages/login";
+import Login from "../pages/login/login1";
 
 // 管理页面
 import Admin from "../admin/main"

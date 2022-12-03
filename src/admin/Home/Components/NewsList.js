@@ -9,7 +9,7 @@ const IconText = ({ icon, text }) => (<Space>
     {text}
 </Space>);
 
-const News = () => {
+export default () => {
 
     const [newsList, setNewsList] = useState([]);
     const {runAsync} = useRequest(getNewsList, {manual: true});
@@ -33,6 +33,6 @@ const News = () => {
             <List.Item.Meta avatar={<Avatar src="https://sf3-cdn-tos.douyinstatic.com/obj/eden-cn/uhbfnupkbps/toutiao_favicon.ico"/>} title={<a href={item.url}>{item.title}</a>} description={item.keywords}/>
             {item.brief}
         </List.Item>)}/>
-    </div>);
-};
-export default News;
+    </div>
+    )
+}

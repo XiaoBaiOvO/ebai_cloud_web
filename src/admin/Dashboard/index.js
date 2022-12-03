@@ -40,7 +40,7 @@ const options = [
     },
 ];
 
-const Dashboard = () => {
+export default () => {
 
     const [form] = Form.useForm();
     const [dateList, setDataList] = useState();
@@ -125,4 +125,3 @@ const Dashboard = () => {
         </Card>
     )
 }
-export default Dashboard;

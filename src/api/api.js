@@ -15,7 +15,7 @@ export const getCollectionDataList = async (params) => (await axios.post("collec
 // User
 export const loginRequest = async (params) => (await axios.post("user/login", params)).data;
 export const currentUserRequest = async () => (await axios.post("user/currentUser")).data;
-// News
+// NewsList
 export const getNewsList = async () => (await axios.post("getNewsList")).data;
 // ChatBox
 export const getCommentList = async () => (await axios.post("comment/getCommentList")).data;

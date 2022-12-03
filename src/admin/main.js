@@ -15,7 +15,7 @@ import {useSelector} from "react-redux";
 
 const { Header, Content, Sider } = Layout;
 
-const Main = () => {
+export default () => {
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -27,7 +27,6 @@ const Main = () => {
         if (document.documentElement.clientWidth < 1000) {
             setIsModalOpen(true)
             setCollapsed(true)
-            console.log(location.pathname)
         }
     }, [])
 
@@ -65,7 +64,11 @@ const Main = () => {
                 <span style={{fontSize: 18, marginLeft: 10}}>小白云工作站</span>
                 <Space style={{position: "absolute", right: 20}}>
                     <Button ghost onClick={() => {navigate("/")}}>返回首页</Button>
-                    <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
+                    <Avatar
+                        style={{ backgroundColor: '#fff', marginTop: -3}}
+                        // icon={<UserOutlined />}
+                        src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+                    />
                     <span>{userName}</span>
                 </Space>
             </Header>
@@ -101,10 +104,10 @@ const Main = () => {
                             margin: '16px 0',
                         }}
                     >
-                        {location.pathname.split("/").map((value, index) =>
-                            (index === 0 ? null : <Breadcrumb.Item>{value}</Breadcrumb.Item>))}
-                        {/*<Breadcrumb.Item>{location.pathname.split("/").map()}</Breadcrumb.Item>*/}
-                        {/*<Breadcrumb.Item>{location.pathname.slice(7)}</Breadcrumb.Item>*/}
+                        <Breadcrumb.Item>控制台</Breadcrumb.Item>
+                        {location.pathname.split("/")
+                            .map((value, index) => index === 0 || index === 1 ? null :
+                                <Breadcrumb.Item key={index}>{value}</Breadcrumb.Item>)}
                     </Breadcrumb>
                     <Content
                         className="site-layout-background"
@@ -123,4 +126,3 @@ const Main = () => {
     );
 };
 
-export default Main;

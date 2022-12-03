@@ -8,7 +8,7 @@ import {useRequest} from "ahooks";
 
 const { Search } = Input;
 
-const ChatBox = () => {
+export default () => {
 
     const [replyAction, setReplyAction] = useState({ key: '', isAction: false });
     const [submitting, setSubmitting] = useState(false);
@@ -148,7 +148,7 @@ const ChatBox = () => {
             </Form.Item>
             <Form.Item>
                 <Button htmlType="submit" loading={submitting} onClick={submitComment} type="primary">
-                    Add Comment
+                    发布评论
                 </Button>
             </Form.Item>
         </div>}/>
@@ -163,6 +163,6 @@ const ChatBox = () => {
 
             <Divider style={{ marginTop: -12 }}/>
         </div>)}/>
-    </div>);
-};
-export default ChatBox;
+    </div>
+    )
+}

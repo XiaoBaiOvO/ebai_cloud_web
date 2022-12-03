@@ -72,8 +72,7 @@ const columns = [
     },
 ];
 
-const CollectionDetail = () => {
-
+export default () => {
     const expandedRowRender = (item) => {
 
         const columns = [
@@ -176,5 +175,5 @@ const CollectionDetail = () => {
                 size="middle"
             />
         </Card>
-    )}
-export default CollectionDetail;
+    )
+}
