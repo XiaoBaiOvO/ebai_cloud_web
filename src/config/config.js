@@ -9,28 +9,28 @@ import {
 } from "@ant-design/icons";
 
 // 首页
-import Pages from "../pages/main";
+import Pages from "../CustomerPages/main";
 
 // 登录
-import Login from "../pages/login/login1";
+import Login from "../LoginPages/login1";
 
 // 管理页面
-import Admin from "../admin/main"
+import Admin from "../AdminPages/main"
 
-import Home from "../admin/Home"
-import Dashboard from "../admin/Dashboard"
-import CollectionDetail from "../admin/CollectionDetail"
-import CollectionReport from "../admin/CollectionReport"
-import Result404 from "../pages/Result/404"
+import Home from "../AdminPages/Home"
+import Dashboard from "../AdminPages/Dashboard"
+import CollectionDetail from "../AdminPages/CollectionDetail"
+import CollectionReport from "../AdminPages/CollectionReport"
+import Result404 from "../CustomerPages/Result/404"
 
 // 路由表
 export const routes = [
     {
-        path: "/login",
+        path: "/LoginPages",
         element: <Login/>,
     },
     {
-        path: "/admin",
+        path: "/AdminPages",
         element: <Admin/>,
         children: [
             {

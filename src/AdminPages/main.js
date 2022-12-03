@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
 import {menu} from "../config/config";
-import MyFooter from "../pages/Commponents/MyFooter";
+import MyFooter from "../CustomerPages/Commponents/MyFooter";
 import {useSelector} from "react-redux";
 
 const { Header, Content, Sider } = Layout;

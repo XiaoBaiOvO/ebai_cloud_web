@@ -13,7 +13,7 @@ export default () => {
     return (<div style={{ backgroundColor: 'white', height: 'calc(100vh)'}}>
         <LoginFormPage
             backgroundImageUrl="https://gw.alipayobjects.com/zos/rmsportal/FfdJeJRQWjEeGTpqgBKj.png"
-            logo={<img alt="logo" src="/logo.png" />}
+            logo={<img alt="logo" src="/public/logo.png" />}
             title="小白云工作站"
             subTitle="—— Ebai Cloud WorkStations ——"
             activityConfig={{
@@ -91,7 +91,7 @@ export default () => {
                 <ProFormText name="username" fieldProps={{
                     size: 'large',
                     prefix: <UserOutlined className={'prefixIcon'}/>,
-                }} placeholder={'用户名: admin or user'} rules={[
+                }} placeholder={'用户名: AdminPages or user'} rules={[
                     {
                         required: true,
                         message: '请输入用户名!',

@@ -3,11 +3,11 @@ import { LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText, } from '@ant-d
 import {Layout, message, Modal, Space, Spin, Tabs} from 'antd';
 import { useEffect, useState } from 'react';
 import {useNavigate} from "react-router-dom";
-import MyFooter from "../Commponents/MyFooter";
+import MyFooter from "../CustomerPages/Commponents/MyFooter";
 import {useRequest} from "ahooks";
-import {currentUserRequest, loginRequest} from "../../api";
+import {currentUserRequest, loginRequest} from "../api";
 import {useDispatch, useSelector} from "react-redux";
-import {setUserId, setUserName, setUserAvatar, setUserData} from "../../redux/userSlice";
+import {setUserId, setUserName, setUserAvatar, setUserData} from "../redux/userSlice";
 import styles from "./login.module.scss";
 
 const iconStyles = {
@@ -35,19 +35,21 @@ export default () => {
             title: '已登录',
             content: `页面将在 ${secondsToGo} 秒后跳转`,
             onOk() {
-                navigate("/admin")
+                navigate("/AdminPages")
             },
+            okText: `知道了 ( ${secondsToGo} )`
         });
         const timer = setInterval(() => {
             secondsToGo -= 1;
             modal.update({
                 content: `页面将在 ${secondsToGo} 秒后跳转`,
+                okText: `知道了 ( ${secondsToGo} )`
             });
         }, 1000);
         setTimeout(() => {
             clearInterval(timer);
             modal.destroy();
-            navigate("/admin")
+            navigate("/AdminPages")
         }, secondsToGo * 1000);
     };
 
@@ -61,7 +63,7 @@ export default () => {
                     dispatch(setUserName(response.resultObject.userName))
                     dispatch(setUserAvatar(response.resultObject.userAvatar))
                     // dispatch(setUserData(response.resultObject))
-                    message.success(response.description).then(navigate("/admin"))
+                    message.success(response.description).then(navigate("/AdminPages"))
                 } else if (response.code === 99) {
                     // Fail
                     message.error(response.description).then()
@@ -78,7 +80,7 @@ export default () => {
         <Layout className={styles.loginLayout} style={{minHeight: document.documentElement.clientHeight - 1}}>
             <div style={{marginTop: 100}}>
                 <LoginForm
-                    logo={<img alt="logo" src="/logo.png" />}
+                    logo={<img alt="logo" src="/public/logo.png" />}
                     title="小白云工作站"
                     subTitle="—— Ebai Cloud WorkStations ——"
                     onFinish={onFinish}

@@ -86,16 +86,16 @@ export default () => {
                 dataIndex: 'formType',
                 key: 'formType',
                 render: ((formType) => {
-                            let color = formType.length > 5 ? 'geekblue' : 'green';
-                            if (formType === 'loser') {
-                                color = 'volcano';
-                            }
-                            return (
-                                <Tag color={color} key={formType}>
-                                    {formType.toUpperCase()}
-                                </Tag>
-                            );
-                        })
+                    let color = formType.length > 5 ? 'geekblue' : 'green';
+                    if (formType === 'loser') {
+                        color = 'volcano';
+                    }
+                    return (
+                        <Tag color={color} key={formType}>
+                            {formType.toUpperCase()}
+                        </Tag>
+                    );
+                })
             },
             {
                 title: '提交状态',

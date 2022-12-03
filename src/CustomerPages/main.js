@@ -132,7 +132,7 @@ const Main = () => {
                 <span style={{color: "white", fontSize: 18, marginLeft: 10}}>小白云工作站</span>
                 <Space style={{position: "absolute", right: 20}}>
                     <Button ghost onClick={() => {
-                        navigate("/login");
+                        navigate("/LoginPages");
                     }}>管理页面</Button>
                     <Button ghost onClick={() => {
                         setOpen(true);
