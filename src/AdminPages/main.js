@@ -25,7 +25,7 @@ export default () => {
 
     useEffect(() => {
         if (document.documentElement.clientWidth < 1000) {
-            setIsModalOpen(true)
+            // setIsModalOpen(true)
             setCollapsed(true)
         }
     }, [])
