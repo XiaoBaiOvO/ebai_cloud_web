@@ -31,6 +31,7 @@ import {getCollectionDataList} from "../api";
 import Collection from "./collection/collection"
 import MyFooter from "./Commponents/MyFooter";
 
+import 'dayjs/locale/zh-cn';
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
