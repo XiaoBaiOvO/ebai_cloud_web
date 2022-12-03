@@ -1,5 +1,7 @@
 export {
     initAxios,
+    loginRequest,
+    currentUserRequest,
     submitCollectionForm,
     getNewsList,
     getCommentList,

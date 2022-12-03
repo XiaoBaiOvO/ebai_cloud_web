@@ -4,6 +4,10 @@ import {Layout, message, Space, Tabs} from 'antd';
 import { useState } from 'react';
 import {useNavigate} from "react-router-dom";
 import MyFooter from "../Commponents/MyFooter";
+import {useRequest} from "ahooks";
+import {currentUserRequest, loginRequest} from "../../api";
+import {useDispatch, useSelector} from "react-redux";
+import {setUserId, setUserName, setUserAvatar, setUserData} from "../../redux/userSlice";
 
 const iconStyles = {
     marginInlineStart: '16px',
@@ -12,22 +16,52 @@ const iconStyles = {
     verticalAlign: 'middle',
     cursor: 'pointer',
 };
+
 export default () => {
+
     const [loginType, setLoginType] = useState('account');
     const navigate = useNavigate();
+    const {userName, userId, userAvatar} = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const {loading, runAsync: doLogin} = useRequest(loginRequest, {manual: true});
+
+    const {runAsync: doCurrentUser} = useRequest(currentUserRequest, {manual: true});
+
+    const onFinish = (values) => {
+        values.loginType = loginType
+        doLogin(values)
+            .then((response) => {
+                if (response.code === 1) {
+                    // Success
+                    dispatch(setUserId(response.resultObject.userId))
+                    // dispatch(setUserName(response.resultObject.userName))
+                    // dispatch(setUserAvatar(response.resultObject.userAvatar))
+                    // dispatch(setUserData(response.resultObject))
+                    // message.success(response.description).then(navigate("/admin"))
+                } else if (response.code === 99) {
+                    // Fail
+                    message.error(response.description).then()
+                } else {
+                    message.error("未知错误").then()
+                }
+            })
+        return null;
+
+        // if (values.username === "admin" && values.password === "admin") {
+        //     navigate("/admin")
+        // }
+    }
+
 
     return (
         <Layout style={{minHeight: document.documentElement.clientHeight - 1}}>
             <div style={{marginTop: 100}}>
+                {userName}|{userId}|{userAvatar}
                 <LoginForm
                     logo={<img alt="logo" src="/logo.png" />}
                     title="小白云工作站"
                     subTitle="—— Ebai Cloud WorkStations ——"
-                    onFinish={(values) => {
-                        if (values.username === "admin" && values.password === "admin") {
-                            navigate("/admin")
-                        }
-                    }}
+                    onFinish={onFinish}
                     initialValues={{
                         autoLogin: true,
                     }}

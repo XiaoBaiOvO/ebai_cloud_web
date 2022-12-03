@@ -12,6 +12,9 @@ export const initAxios = dispatch => {
 // Collection
 export const submitCollectionForm = async (params) => (await axios.post("submitCollectionForm", params)).data;
 export const getCollectionDataList = async (params) => (await axios.post("collection/getCollectedStatus", params)).data;
+// User
+export const loginRequest = async (params) => (await axios.post("user/login", params)).data;
+export const currentUserRequest = async () => (await axios.post("user/currentUser")).data;
 // News
 export const getNewsList = async () => (await axios.post("getNewsList")).data;
 // ChatBox
