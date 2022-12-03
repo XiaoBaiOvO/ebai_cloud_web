@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {
     message,
     Upload,
@@ -34,7 +34,7 @@ new Promise((resolve, reject) => {
 
 const tabList = [
     {
-        key: '核酸',
+        key: '核酸检测截图',
         tab: '核酸检测截图',
     },
     {
@@ -56,11 +56,11 @@ export default () => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     // 经纬度
-    const [longitude, setLongitude] = useState(0);
-    const [latitude, setLatitude] = useState(0);
+    // const [longitude, setLongitude] = useState(0);
+    // const [latitude, setLatitude] = useState(0);
     // Form
     const [form] = Form.useForm();
-    const [formType, setFormType] = useState('核酸');
+    const [formType, setFormType] = useState('核酸检测截图');
     const [isInputName, setIsInputName] = useState(true);
     // 上传
     const [healthCodeFile, setHealthCodeFile] = useState([]);
@@ -72,9 +72,13 @@ export default () => {
 
     const submitForm = async (values) => {
         values.formType = formType;
-        values.position = [longitude, latitude];
+        // values.position = [longitude, latitude];
         runAsync(values).then((response) => {
             message.success(response.message);
+            setHealthCodeFile([]);
+            setTravelCodeFile([]);
+            setTestScreenshotFile([]);
+            form.resetFields();
         }).catch((e) => {
             message.error(e)
         });
@@ -112,68 +116,71 @@ export default () => {
     const twoCodeUpload = (
         <Form.Item label="双码截图" name="twoCodeFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
             <div>
-            <Input value={form.getFieldValue("healthCodeFileValue")} style={{width: "100%"}} disabled />
-            <Input value={form.getFieldValue("travelCodeFileValue")} style={{width: "100%"}} disabled />
-            <Space align="end" style={{marginTop: 15}}>
-                <Upload
-                    beforeUpload={() => setHealthCodeFileId(uuid())}
-                    data={{
-                        formType: '双码',
-                        fileType: '健康码',
-                        name: form.getFieldValue("name"),
-                        classNumber: form.getFieldValue("classNumber"),
-                        fileId: healthCodeFileId
-                    }}
-                    action="http://ebai.cloud:9000/api/upload"
-                    listType="picture-card"
-                    fileList={healthCodeFile}
-                    onPreview={handlePreview}
-                    onChange={healthCodeFileChange}
-                    disabled={isInputName}
-                >
-                    {healthCodeFile.length >= 1 ? null : (
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>上传健康码</div>
-                        </div>
-                    )}
-                </Upload>
-                <Upload
-                    beforeUpload={() => setTravelCodeFileId(uuid())}
-                    data={{
-                        formType: '双码',
-                        fileType: '行程卡',
-                        name: form.getFieldValue("name"),
-                        classNumber: form.getFieldValue("classNumber"),
-                        fileId: travelCodeFileId
-                    }}
-                    action="http://ebai.cloud:9000/api/upload"
-                    listType="picture-card"
-                    fileList={travelCodeFile}
-                    onPreview={handlePreview}
-                    onChange={travelCodeFileChange}
-                    disabled={isInputName}
-                >
-                    {travelCodeFile.length >= 1 ? null :
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>上传行程卡</div>
-                        </div>
-                    }
-                </Upload>
-                <Button shape="circle" onClick={() => {
-                        setHealthCodeFile([]);
-                        setTravelCodeFile([]);
-                        form.resetFields([
-                            "twoCodeFile",
-                            "healthCodeFile",
-                            "travelCodeFile",
-                            "healthCodeFileValue",
-                            "travelCodeFileValue"]);}}
-                    icon={<DeleteOutlined />}
-                    style={{marginBottom: 10}}
-                />
-            </Space>
+                <Form.Item>
+                    <Input value={form.getFieldValue("healthCodeFileValue")} style={{width: "100%"}} disabled />
+                </Form.Item>
+                <Form.Item>
+                    <Input value={form.getFieldValue("travelCodeFileValue")} style={{width: "100%"}} disabled />
+                </Form.Item>
+                <Space align="end" style={{marginTop: 15}}>
+                    <Upload
+                        beforeUpload={() => setHealthCodeFileId(uuid())}
+                        data={{
+                            formType: '双码',
+                            fileType: '健康码',
+                            name: form.getFieldValue("name"),
+                            classNumber: form.getFieldValue("classNumber"),
+                            fileId: healthCodeFileId
+                        }}
+                        action="http://ebai.cloud:9000/api/upload"
+                        listType="picture-card"
+                        fileList={healthCodeFile}
+                        onPreview={handlePreview}
+                        onChange={healthCodeFileChange}
+                        disabled={isInputName}>
+                        {healthCodeFile.length >= 1 ? null : (
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>上传健康码</div>
+                            </div>
+                        )}
+                    </Upload>
+                    <Upload
+                        beforeUpload={() => setTravelCodeFileId(uuid())}
+                        data={{
+                            formType: '双码',
+                            fileType: '行程卡',
+                            name: form.getFieldValue("name"),
+                            classNumber: form.getFieldValue("classNumber"),
+                            fileId: travelCodeFileId
+                        }}
+                        action="http://ebai.cloud:9000/api/upload"
+                        listType="picture-card"
+                        fileList={travelCodeFile}
+                        onPreview={handlePreview}
+                        onChange={travelCodeFileChange}
+                        disabled={isInputName}
+                    >
+                        {travelCodeFile.length >= 1 ? null :
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>上传行程卡</div>
+                            </div>
+                        }
+                    </Upload>
+                    <Button shape="circle" onClick={() => {
+                            setHealthCodeFile([]);
+                            setTravelCodeFile([]);
+                            form.resetFields([
+                                "twoCodeFile",
+                                "healthCodeFile",
+                                "travelCodeFile",
+                                "healthCodeFileValue",
+                                "travelCodeFileValue"]);}}
+                        icon={<DeleteOutlined />}
+                        style={{marginBottom: 10}}
+                    />
+                </Space>
             </div>
         </Form.Item>
     )
@@ -181,40 +188,42 @@ export default () => {
     const testScreenshotUpload = (
         <Form.Item label="核酸检测截图" name="testScreenshotFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
             <div>
-            <Input value={form.getFieldValue("testScreenshotFileValue")} style={{width: "100%"}} disabled />
-            <Space align="end" style={{marginTop: 15}}>
-                <Upload
-                    beforeUpload={() => setTestScreenshotFileId(uuid())}
-                    data={{
-                        formType: '核酸',
-                        fileType: '核酸检测截图',
-                        name: form.getFieldValue("name"),
-                        classNumber: form.getFieldValue("classNumber"),
-                        fileId: testScreenshotFileId
-                    }}
-                    action="http://ebai.cloud:9000/api/upload"
-                    listType="picture-card"
-                    fileList={testScreenshotFile}
-                    onPreview={handlePreview}
-                    onChange={testScreenshotFileChange}
-                    disabled={isInputName}
-                >
-                    {testScreenshotFile.length >= 1 ? null : (
-                        <div>
-                            <PlusOutlined />
-                            <div style={{ marginTop: 8 }}>上传核酸截图</div>
-                        </div>
-                    )}
-                </Upload>
-                <Button
-                    shape="circle"
-                    onClick={() => {
-                        setTestScreenshotFile([]);
-                        form.resetFields(["testScreenshotFile", "testScreenshotFileValue"])}}
-                    icon={<DeleteOutlined />}
-                    style={{marginBottom: 10}}
-                />
-            </Space>
+                <Form.Item>
+                    <Input value={form.getFieldValue("testScreenshotFileValue")} style={{width: "100%"}} disabled />
+                </Form.Item>
+                <Space align="end" style={{marginTop: 15}}>
+                    <Upload
+                        beforeUpload={() => setTestScreenshotFileId(uuid())}
+                        data={{
+                            formType: '核酸检测截图',
+                            fileType: '核酸检测截图',
+                            name: form.getFieldValue("name"),
+                            classNumber: form.getFieldValue("classNumber"),
+                            fileId: testScreenshotFileId
+                        }}
+                        action="http://ebai.cloud:9000/api/upload"
+                        listType="picture-card"
+                        fileList={testScreenshotFile}
+                        onPreview={handlePreview}
+                        onChange={testScreenshotFileChange}
+                        disabled={isInputName}
+                    >
+                        {testScreenshotFile.length >= 1 ? null : (
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>上传核酸截图</div>
+                            </div>
+                        )}
+                    </Upload>
+                    <Button
+                        shape="circle"
+                        onClick={() => {
+                            setTestScreenshotFile([]);
+                            form.resetFields(["testScreenshotFile", "testScreenshotFileValue"])}}
+                        icon={<DeleteOutlined />}
+                        style={{marginBottom: 10}}
+                    />
+                </Space>
             </div>
         </Form.Item>
     )
@@ -271,7 +280,7 @@ export default () => {
                         )}>
                         <Select.Option value="地科1班">地科1班</Select.Option>
                         <Select.Option value="地科2班">地科2班</Select.Option>
-                        <Select.Option value="小白云开发开发组">小白云开发开发组</Select.Option>
+                        <Select.Option value="小白云开发组">小白云开发组</Select.Option>
                     </Select>
                 </Form.Item>
                 <Form.Item label="居住情况" name="location" rules={[{required: true}]}>
@@ -289,8 +298,7 @@ export default () => {
                     <Button
                         htmlType="submit"
                         type="primary"
-                        style={{marginRight: 5, width: "70%"}}
-                    >
+                        style={{marginRight: 5, width: "70%"}}>
                         提交
                     </Button>
                     <Button
@@ -300,8 +308,7 @@ export default () => {
                             setTestScreenshotFile([]);
                             form.resetFields();
                         }}
-                        style={{marginLeft: 5, width: "20%"}}
-                    >
+                        style={{marginLeft: 5, width: "20%"}}>
                         重置
                     </Button>
                 </div>

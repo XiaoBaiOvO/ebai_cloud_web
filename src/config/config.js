@@ -63,7 +63,6 @@ export const routes = [
         path: "*",
         element: <Result404/>,
     }
-
 ];
 
 // 菜单栏

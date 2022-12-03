@@ -74,7 +74,7 @@ const columns = [
 
 const CollectionDetail = () => {
 
-    const expandedRowRender = () => {
+    const expandedRowRender = (item) => {
 
         const columns = [
             {
@@ -129,6 +129,7 @@ const CollectionDetail = () => {
                 ),
             },
         ];
+        // new Array(3).map( (, idx) => ({title: `sub ${idx}`}));
         const data = [
             {
                 key: 1,

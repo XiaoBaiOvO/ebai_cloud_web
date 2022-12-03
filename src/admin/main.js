@@ -11,6 +11,7 @@ import {
 import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
 import {menu} from "../config/config";
 import MyFooter from "../pages/Commponents/MyFooter";
+import {useSelector} from "react-redux";
 
 const { Header, Content, Sider } = Layout;
 
@@ -20,6 +21,7 @@ const Main = () => {
     const location = useLocation();
     const [collapsed, setCollapsed] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const {userName} = useSelector(state => state.user);
 
     useEffect(() => {
         if (document.documentElement.clientWidth < 1000) {
@@ -64,7 +66,7 @@ const Main = () => {
                 <Space style={{position: "absolute", right: 20}}>
                     <Button ghost onClick={() => {navigate("/")}}>返回首页</Button>
                     <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
-                    <span>Admin</span>
+                    <span>{userName}</span>
                 </Space>
             </Header>
             <Layout>

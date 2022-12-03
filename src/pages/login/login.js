@@ -4,31 +4,26 @@ import {useRequest} from "ahooks";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 
-// import {apiLogin} from "../../api";
-import {setUserName} from "../../redux/userSlice";
+import {loginRequest, currentUserRequest} from "../../api";
 import styles from "./login.module.scss";
 import {LockOutlined, UserOutlined} from "@ant-design/icons";
 
 const Login = () => {
     const {userName} = useSelector(state => state.user);
-    const [username, setUsername] = useState("admin");
-    const [password, setPassword] = useState("Admin_123");
-    // const {loading, runAsync} = useRequest(apiLogin, {manual: true});
+
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
 
     useEffect(() => {
-            userName?.length > 0 && navigate(location.state?.from ?? "/dashboard", {replace: true});
+
         }, [userName]
     );
 
     const handleClick = () => {
-        // runAsync({username, password}).then((response) => {
-        //     dispatch(setUserName(response.currentAuthority));
-        //     navigate(location.state?.from ?? "/dashboard", {replace: true});
-        // });
+
     }
+
     const currentYear = new Date().getFullYear();
     return (
         <section className={styles.layout}>
