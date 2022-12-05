@@ -9,7 +9,7 @@
     "@ant-design/pro-components": "latest",
     "@reduxjs/toolkit": "latest",
     "ahooks": "latest",
-    "antd": "latest",
+    "antd": "4",
     "axios": "latest",
     "compress-create-react-app": "latest",
     "dayjs": "latest",
