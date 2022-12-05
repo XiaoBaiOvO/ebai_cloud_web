@@ -1,4 +1,4 @@
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     message,
     Upload,
@@ -10,19 +10,20 @@ import {
     Select,
     Input,
     Radio,
-    Divider,
+    Divider, List,
 } from 'antd';
 import {
     AlertOutlined,
     DeleteOutlined,
     EllipsisOutlined,
-    PlusOutlined
+    PlusOutlined, UserOutlined
 } from "@ant-design/icons";
 
 import {useRequest} from "ahooks";
 import {submitCollectionForm} from "../../api";
 
 import uuid from 'react-uuid';
+import dayjs from "dayjs";
 
 const getBase64 = (file =>
 new Promise((resolve, reject) => {
@@ -42,28 +43,22 @@ const tabList = [
         tab: '健康码&行程卡截图',
     },
     {
-        key: '青年大学习',
+        key: '青年大学习截图',
         tab: '青年大学习截图',
     },
 ];
 
-const validateMessages = {
-    required: '${label} 为必填项',
-};
-
 export default () => {
 
     // API
-    const {runAsync} = useRequest(submitCollectionForm, {manual: true});
+    const {runAsync: doSubmitCollectionForm} = useRequest(submitCollectionForm, {manual: true});
     // 上传预览
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
-    // 经纬度
-    // const [longitude, setLongitude] = useState(0);
-    // const [latitude, setLatitude] = useState(0);
     // Form
     const [form] = Form.useForm();
+    const [nameList, setNameList] = useState();
     const [formType, setFormType] = useState('核酸检测截图');
     const [isInputName, setIsInputName] = useState(true);
     // 上传
@@ -77,10 +72,34 @@ export default () => {
     const [testScreenshotFileId, setTestScreenshotFileId] = useState('');
     const [partyStudyFileId, setPartyStudyFileId] = useState([]);
 
+    useEffect(() => {
+
+        setNameList([
+            {
+                label: '地科1班',
+                options: [
+                    {value: 'A', classNumber: '地科1班'},
+                    {value: 'B', classNumber: '地科1班'},
+                ],
+            },
+            {
+                label: '地科2班',
+                options: [
+                    {value: 'C', classNumber: '地科2班'}
+                ],
+            },
+        ])
+    }, [])
+
+    const onChangeNameInput = (_, {classNumber}) => {
+        form.setFieldValue("classNumber", classNumber)
+        console.log(classNumber)
+    }
+
     const submitForm = async (values) => {
         values.formType = formType;
         // values.position = [longitude, latitude];
-        runAsync(values).then((response) => {
+        doSubmitCollectionForm(values).then((response) => {
             message.success(response.message);
             setHealthCodeFile([]);
             setTravelCodeFile([]);
@@ -301,6 +320,13 @@ export default () => {
         </Form.Item>
     )
 
+    // runAsync(request).then((response) => {
+    //     setDataList(response.resultObject.dataList)
+    // }).catch((e) => {
+    //     message.error(e).then(() => {})
+    // });
+
+
     return (
         <Card
             style={{
@@ -312,7 +338,7 @@ export default () => {
             tabBarExtraContent={<EllipsisOutlined />}
             onTabChange={(key) => setFormType(key)}
         >
-            {formType === "青年大学习" ? (
+            {formType === "青年大学习截图" ? (
                 <Form
                     labelCol={{span: 5}}
                     initialValues={{
@@ -402,8 +428,27 @@ export default () => {
                 }}
             >
                 <Form.Item label="姓名" name="name" rules={[{required: true}]}>
-                    <Input style={{width: "100%"}} placeholder="请输入姓名后 再上传文件" />
+                {/*<Select*/}
+                {/*    showSearch*/}
+                {/*    placeholder="请输入姓名"*/}
+                {/*    // optionFilterProp="children"*/}
+                {/*    // onChange={onChange}*/}
+                {/*    // onSearch={onSearch}*/}
+                {/*    // filterOption={(input, option) =>*/}
+                {/*    //     (option?.name ?? '').toLowerCase().includes(input.toLowerCase())*/}
+                {/*    // }*/}
+                {/*    itemLayout="horizontal"*/}
+                {/*    options={nameList}*/}
+                {/*    ></Select>*/}
+                    <Select
+                        showSearch
+                        placeholder="请输入姓名"
+                        onChange={onChangeNameInput}
+                        options={nameList}
+                    />
                 </Form.Item>
+
+
                 <Form.Item label="班级" name="classNumber" rules={[{required: true}]}>
                     <Select
                         dropdownRender={(menu) => (
