@@ -41,6 +41,10 @@ const tabList = [
         key: '双码',
         tab: '健康码&行程卡截图',
     },
+    {
+        key: '青年大学习',
+        tab: '青年大学习截图',
+    },
 ];
 
 const validateMessages = {
@@ -66,9 +70,12 @@ export default () => {
     const [healthCodeFile, setHealthCodeFile] = useState([]);
     const [travelCodeFile, setTravelCodeFile] = useState([]);
     const [testScreenshotFile, setTestScreenshotFile] = useState([]);
+    const [partyStudyFile, setPartyStudyFile] = useState([]);
+
     const [healthCodeFileId, setHealthCodeFileId] = useState('');
     const [travelCodeFileId, setTravelCodeFileId] = useState('');
     const [testScreenshotFileId, setTestScreenshotFileId] = useState('');
+    const [partyStudyFileId, setPartyStudyFileId] = useState([]);
 
     const submitForm = async (values) => {
         values.formType = formType;
@@ -78,6 +85,7 @@ export default () => {
             setHealthCodeFile([]);
             setTravelCodeFile([]);
             setTestScreenshotFile([]);
+            setPartyStudyFile([])
             form.resetFields();
         }).catch((e) => {
             message.error(e)
@@ -112,6 +120,12 @@ export default () => {
         form.setFieldValue("testScreenshotFile", testScreenshotFileId);
         form.setFieldValue("testScreenshotFileValue", "核酸检测截图-" + form.getFieldValue("name") + "-" + testScreenshotFileId);
     }
+    const partyStudyFileChange = ({fileList}) => {
+        setPartyStudyFile(fileList);
+        form.setFieldValue("partyStudyFile", partyStudyFileId);
+        form.setFieldValue("partyStudyFileValue", "青年大学习-" + form.getFieldValue("name") + "-" + partyStudyFileId);
+    }
+
 
     const twoCodeUpload = (
         <Form.Item label="双码截图" name="twoCodeFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
@@ -186,10 +200,17 @@ export default () => {
     )
 
     const testScreenshotUpload = (
-        <Form.Item label="核酸检测截图" name="testScreenshotFile" rules={[{required: true}]} tooltip="先填写姓名才能上传">
+        <Form.Item
+            label="核酸检测截图"
+            name="testScreenshotFile"
+            rules={[{required: true}]}
+            tooltip="先填写姓名才能上传">
             <div>
                 <Form.Item>
-                    <Input value={form.getFieldValue("testScreenshotFileValue")} style={{width: "100%"}} disabled />
+                    <Input
+                        value={form.getFieldValue("testScreenshotFileValue")}
+                        style={{width: "100%"}}
+                        disabled />
                 </Form.Item>
                 <Space align="end" style={{marginTop: 15}}>
                     <Upload
@@ -228,6 +249,58 @@ export default () => {
         </Form.Item>
     )
 
+    const partyStudyUpload = (
+        <Form.Item
+            label="学习截图"
+            name="partyStudyFile"
+            rules={[{required: true}]}
+            tooltip="先填写姓名才能上传"
+        >
+            <div>
+                <Form.Item>
+                    <Input
+                        value={form.getFieldValue("partyStudyFileValue")}
+                        style={{width: "100%"}}
+                        disabled
+                    />
+                </Form.Item>
+                <Space align="end" style={{marginTop: 15}}>
+                    <Upload
+                        beforeUpload={() => setPartyStudyFileId(uuid())}
+                        data={{
+                            formType: '青年大学习截图',
+                            fileType: '青年大学习截图',
+                            name: form.getFieldValue("name"),
+                            classNumber: form.getFieldValue("classNumber"),
+                            fileId: partyStudyFileId
+                        }}
+                        action="http://ebai.cloud:9000/api/upload"
+                        listType="picture-card"
+                        fileList={partyStudyFile}
+                        onPreview={handlePreview}
+                        onChange={partyStudyFileChange}
+                        disabled={isInputName}
+                    >
+                        {partyStudyFile.length >= 1 ? null : (
+                            <div>
+                                <PlusOutlined />
+                                <div style={{ marginTop: 8 }}>上传学习截图</div>
+                            </div>
+                        )}
+                    </Upload>
+                    <Button
+                        shape="circle"
+                        onClick={() => {
+                            setPartyStudyFile([]);
+                            form.resetFields(["partyStudyFile", "partyStudyFileValue"])}}
+                        icon={<DeleteOutlined />}
+                        style={{marginBottom: 10}}
+                    />
+                </Space>
+            </div>
+        </Form.Item>
+    )
+
     return (
         <Card
             style={{
@@ -239,6 +312,74 @@ export default () => {
             tabBarExtraContent={<EllipsisOutlined />}
             onTabChange={(key) => setFormType(key)}
         >
+            {formType === "青年大学习" ? (
+                <Form
+                    labelCol={{span: 5}}
+                    initialValues={{
+                        classNumber: "地科2班",
+                        partyStudyFileValue: "青年大学习截图: <待上传>",
+
+                    }}
+                    form={form}
+                    onFinish={submitForm}
+                    onValuesChange={() =>
+                        setIsInputName(
+                            form.getFieldValue("name") === '' ||
+                            form.getFieldValue("name") === undefined ||
+                            form.getFieldValue("name") === null)
+                    }
+                    validateMessages={{
+                        required: '${label}为必填项',
+                    }}
+                >
+                    <Form.Item label="姓名" name="name" rules={[{required: true}]}>
+                        <Input style={{width: "100%"}} placeholder="请输入姓名后 再上传文件" />
+                    </Form.Item>
+                    <Form.Item label="班级" name="classNumber" rules={[{required: true}]}>
+                        <Select
+                            dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    <Divider
+                                        style={{
+                                            margin: 8,
+                                        }}
+                                    />
+                                    <Button type="text" icon={<AlertOutlined />} disabled>
+                                        增加班级请联系 => 黄敏倩
+                                    </Button>
+                                </>
+                            )}>
+                            <Select.Option value="地科1班">地科1班</Select.Option>
+                            <Select.Option value="地科2班">地科2班</Select.Option>
+                            <Select.Option value="小白云开发组">小白云开发组</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    {formType === "青年大学习" ? partyStudyUpload : null}
+                    <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
+                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                    </Modal>
+                    <div style={{width: "100%", textAlign: "center"}}>
+                        <Button
+                            htmlType="submit"
+                            type="primary"
+                            style={{marginRight: 5, width: "70%"}}>
+                            提交
+                        </Button>
+                        <Button
+                            htmlType="reset" onClick={() => {
+                            setHealthCodeFile([]);
+                            setTravelCodeFile([]);
+                            setTestScreenshotFile([]);
+                            setPartyStudyFile([]);
+                            form.resetFields();
+                        }}
+                            style={{marginLeft: 5, width: "20%"}}>
+                            重置
+                        </Button>
+                    </div>
+                </Form>
+                ) : (
             <Form
                 labelCol={{span: 5}}
                 initialValues={{
@@ -246,7 +387,7 @@ export default () => {
                     location: "在家",
                     healthCodeFileValue: "健康码截图: <待上传>",
                     travelCodeFileValue: "行程卡截图: <待上传>",
-                    testScreenshotFileValue: "核酸检测截图: <待上传>"
+                    testScreenshotFileValue: "核酸检测截图: <待上传>",
                 }}
                 form={form}
                 onFinish={submitForm}
@@ -291,6 +432,7 @@ export default () => {
                     </Radio.Group>
                 </Form.Item>
                 {formType === "双码" ? twoCodeUpload : testScreenshotUpload}
+
                 <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={() => setPreviewOpen(false)}>
                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
                 </Modal>
@@ -306,13 +448,14 @@ export default () => {
                             setHealthCodeFile([]);
                             setTravelCodeFile([]);
                             setTestScreenshotFile([]);
+                            setPartyStudyFile([])
                             form.resetFields();
                         }}
                         style={{marginLeft: 5, width: "20%"}}>
                         重置
                     </Button>
                 </div>
-            </Form>
+            </Form>)}
         </Card>
     )
 };
