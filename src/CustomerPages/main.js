@@ -51,6 +51,10 @@ const options = [
             {
                 value: '双码',
                 label: '双码',
+            },
+            {
+                value: '青年大学习截图',
+                label: '青年大学习截图',
             }
         ],
     },
@@ -65,6 +69,10 @@ const options = [
             {
                 value: '双码',
                 label: '双码',
+            },
+            {
+                value: '青年大学习截图',
+                label: '青年大学习截图',
             }
         ],
     },
