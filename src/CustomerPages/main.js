@@ -34,6 +34,7 @@ import MyFooter from "./Commponents/MyFooter";
 import 'dayjs/locale/zh-cn';
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import ChatBox from "../AdminPages/Home/Components/ChatBox";
 dayjs.extend(customParseFormat);
 
 const {Header} = Layout;
@@ -148,7 +149,7 @@ const Main = () => {
                         setTimeout(() => {
                             updateQueryRequest().then(() => {})
                         },100);
-                    }}>数据统计</Button>
+                    }}>讨论区</Button>
                 </Space>
             </Header>
             <Collection/>
@@ -169,149 +170,152 @@ const Main = () => {
                     </Space>
                 }
             >
-                <Divider orientation="left">快捷查询</Divider>
-                <Form
-                    onValuesChange={updateQueryRequest}
-                    form={form}
-                    style={{width: "100%"}}
-                    layout="inline"
-                    initialValues={{
-                        queryRequest: ["地科2班", "核酸检测截图"],
-                        date: dayjs()
-                    }}
-                >
-                    <Space.Compact block>
-                        <Form.Item name="queryRequest" style={{width: 197, margin: 0}}>
-                            <Cascader options={options}/>
-                        </Form.Item>
-                        <Form.Item name="date" style={{width: 115, margin: 0}}>
-                            <DatePicker allowClear={false} placeholder="请选择日期" format={dateFormat}/>
-                        </Form.Item>
-                    </Space.Compact>
-                </Form>
-                <Card size="small">
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={dateList}
-                        renderItem={(item) => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    title={<a>{item.name}</a>}
-                                    avatar={<UserOutlined/>}
-                                />
-                                {item.time !== null ? (
-                                    <>
-                                        <a>{item.time.substring(0, 8)}</a>
-                                        <CheckOutlined style={{marginLeft: 20}}/>
-                                    </>) : <CloseOutlined/>}
-                            </List.Item>
-                        )}
-                    />
-                </Card>
-                <Divider orientation="left">用户调查</Divider>
-                <div>
-                    <Form layout="horizontal" onFinish={onFinish}>
-                        <Form.Item
-                            name="coders"
-                            label="姓名"
-                            labelCol={{
-                                span: 6,
-                            }}
-                            wrapperCol={{
-                                span: 16,
-                            }}
-                            // rules={[
-                            //     {
-                            //         validator: checkMention,
-                            //     },
-                            // ]}
-                        >
-                            <Mentions
-                                rows={1}
-                                placeholder="非必填"
-                                options={[
-                                    {
-                                        value: 'afc163',
-                                        label: 'afc163',
-                                    },
-                                    {
-                                        value: 'zombieJ',
-                                        label: 'zombieJ',
-                                    },
-                                    {
-                                        value: 'yesmeck',
-                                        label: 'yesmeck',
-                                    },
-                                ]}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="评价"
-                            label="评价"
-                            labelCol={{
-                                span: 6,
-                            }}
-                            wrapperCol={{
-                                span: 16,
-                            }}
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                        >
-                            <Mentions
-                                rows={3}
-                                placeholder="可以对小白云给出评价或提出建议"
-                                options={[
-                                    {
-                                        value: 'afc163',
-                                        label: 'afc163',
-                                    },
-                                    {
-                                        value: 'zombieJ',
-                                        label: 'zombieJ',
-                                    },
-                                    {
-                                        value: 'yesmeck',
-                                        label: 'yesmeck',
-                                    },
-                                ]}
-                            />
-                        </Form.Item>
-                        <Form.Item
-                            name="stars"
-                            labelCol={{
-                                span: 6,
-                            }}
-                            wrapperCol={{
-                                span: 16,
-                            }}
-                            label="打分"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                        >
-                            <Rate style={{marginLeft: 20}} defaultValue={5} character={({index}) => customIcons[index + 1]}/> </Form.Item>
-                        <Form.Item
-                            wrapperCol={{
-                                span: 14,
-                                offset: 6,
-                            }}
-                        >
-                            <Button htmlType="submit" type="primary">
-                                提交
-                            </Button>
-                            <Button htmlType="button" onClick={() => {
-                                form.resetFields();
-                            }}>
-                                重置
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </div>
+                {/*<Divider orientation="left">用户反馈</Divider>*/}
+                {/*<Form*/}
+                {/*    onValuesChange={updateQueryRequest}*/}
+                {/*    form={form}*/}
+                {/*    style={{width: "100%"}}*/}
+                {/*    layout="inline"*/}
+                {/*    initialValues={{*/}
+                {/*        queryRequest: ["地科2班", "核酸检测截图"],*/}
+                {/*        date: dayjs()*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    <Space.Compact block>*/}
+                {/*        <Form.Item name="queryRequest" style={{width: 197, margin: 0}}>*/}
+                {/*            <Cascader options={options}/>*/}
+                {/*        </Form.Item>*/}
+                {/*        <Form.Item name="date" style={{width: 115, margin: 0}}>*/}
+                {/*            <DatePicker allowClear={false} placeholder="请选择日期" format={dateFormat}/>*/}
+                {/*        </Form.Item>*/}
+                {/*    </Space.Compact>*/}
+                {/*</Form>*/}
+                {/*<Card size="small">*/}
+                {/*    <List*/}
+                {/*        itemLayout="horizontal"*/}
+                {/*        dataSource={dateList}*/}
+                {/*        renderItem={(item) => (*/}
+                {/*            <List.Item>*/}
+                {/*                <List.Item.Meta*/}
+                {/*                    title={<a>{item.name}</a>}*/}
+                {/*                    avatar={<UserOutlined/>}*/}
+                {/*                />*/}
+                {/*                {item.time !== null ? (*/}
+                {/*                    <>*/}
+                {/*                        <a>{item.time.substring(0, 8)}</a>*/}
+                {/*                        <CheckOutlined style={{marginLeft: 20}}/>*/}
+                {/*                    </>) : <CloseOutlined/>}*/}
+                {/*            </List.Item>*/}
+                {/*        )}*/}
+                {/*    />*/}
+                {/*/!*</Card>*!/*/}
+                {/*/!*<Divider orientation="left">用户调查</Divider>*!/*/}
+                {/*<div>*/}
+                {/*    <Form layout="horizontal" onFinish={onFinish}>*/}
+                {/*        <Form.Item*/}
+                {/*            name="coders"*/}
+                {/*            label="姓名"*/}
+                {/*            labelCol={{*/}
+                {/*                span: 6,*/}
+                {/*            }}*/}
+                {/*            wrapperCol={{*/}
+                {/*/!*                span: 16,*!/*/}
+                {/*/!*            }}*!/*/}
+                {/*/!*            // rules={[*!/*/}
+                {/*/!*            //     {*!/*/}
+                {/*            //         validator: checkMention,*/}
+                {/*            //     },*/}
+                {/*            // ]}*/}
+                {/*/!*        >*!/*/}
+                {/*/!*            <Mentions*!/*/}
+                {/*/!*                rows={1}*!/*/}
+                {/*                placeholder="非必填"*/}
+                {/*                options={[*/}
+                {/*                    {*/}
+                {/*                        value: 'afc163',*/}
+                {/*                        label: 'afc163',*/}
+                {/*                    },*/}
+                {/*                    {*/}
+                {/*                        value: 'zombieJ',*/}
+                {/*                        label: 'zombieJ',*/}
+                {/*                    },*/}
+                {/*                    {*/}
+                {/*                        value: 'yesmeck',*/}
+                {/*                        label: 'yesmeck',*/}
+                {/*                    },*/}
+                {/*                ]}*/}
+                {/*            />*/}
+                {/*        </Form.Item>*/}
+                {/*        <Form.Item*/}
+                {/*            name="评价"*/}
+                {/*            label="评价"*/}
+                {/*            labelCol={{*/}
+                {/*                span: 6,*/}
+                {/*            }}*/}
+                {/*            wrapperCol={{*/}
+                {/*                span: 16,*/}
+                {/*            }}*/}
+                {/*            rules={[*/}
+                {/*                {*/}
+                {/*                    required: true,*/}
+                {/*                },*/}
+                {/*            ]}*/}
+                {/*        >*/}
+                {/*            <Mentions*/}
+                {/*                rows={3}*/}
+                {/*                placeholder="可以对小白云给出评价或提出建议"*/}
+                {/*                options={[*/}
+                {/*                    {*/}
+                {/*                        value: 'afc163',*/}
+                {/*                        label: 'afc163',*/}
+                {/*                    },*/}
+                {/*                    {*/}
+                {/*                        value: 'zombieJ',*/}
+                {/*                        label: 'zombieJ',*/}
+                {/*                    },*/}
+                {/*                    {*/}
+                {/*                        value: 'yesmeck',*/}
+                {/*                        label: 'yesmeck',*/}
+                {/*                    },*/}
+                {/*                ]}*/}
+                {/*            />*/}
+                {/*        </Form.Item>*/}
+                {/*        <Form.Item*/}
+                {/*            name="stars"*/}
+                {/*            labelCol={{*/}
+                {/*                span: 6,*/}
+                {/*            }}*/}
+                {/*            wrapperCol={{*/}
+                {/*                span: 16,*/}
+                {/*            }}*/}
+                {/*            label="打分"*/}
+                {/*            rules={[*/}
+                {/*                {*/}
+                {/*                    required: true,*/}
+                {/*                },*/}
+                {/*            ]}*/}
+                {/*        >*/}
+                {/*            <Rate style={{marginLeft: 20}} defaultValue={5} character={({index}) => customIcons[index + 1]}/> </Form.Item>*/}
+                {/*        <Form.Item*/}
+                {/*            wrapperCol={{*/}
+                {/*                span: 14,*/}
+                {/*                offset: 6,*/}
+                {/*            }}*/}
+                {/*        >*/}
+                {/*            <Button htmlType="submit" type="primary">*/}
+                {/*                提交*/}
+                {/*            </Button>*/}
+                {/*            <Button htmlType="button" onClick={() => {*/}
+                {/*                form.resetFields();*/}
+                {/*            }}>*/}
+                {/*                重置*/}
+                {/*            </Button>*/}
+                {/*        </Form.Item>*/}
+                {/*    </Form>*/}
+                    <Divider orientation="left">小白云社区</Divider>
+
+                {/*</div>*/}
+                <ChatBox/>
             </Drawer>
         </Layout>
     );

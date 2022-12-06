@@ -79,6 +79,7 @@ export default () => {
                         <Select>
                             <Select.Option value="双码">双码</Select.Option>
                             <Select.Option value="核酸检测截图">核酸检测截图</Select.Option>
+                            <Select.Option value="青年大学习截图">学习截图</Select.Option>
                         </Select>
                     </Form.Item>
                     <Form.Item label="日期" name="date" rules={[{required: true}]}>
